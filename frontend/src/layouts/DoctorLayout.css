@@ -1,0 +1,212 @@
+/* ===========================
+   LAYOUT
+=========================== */
+
+.doctor-layout{
+    min-height:100vh;
+    background:#f4f7fc;
+}
+
+/* ===========================
+   TOP NAVBAR
+=========================== */
+
+.doctor-navbar{
+
+    position:sticky;
+    top:0;
+
+    width:100%;
+    height:75px;
+
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 40px;
+
+    box-sizing:border-box;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+    z-index:999;
+}
+
+/* Left */
+
+.doctor-logo{
+
+    color:white;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    white-space:nowrap;
+}
+
+/* Center */
+
+.doctor-name{
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:500;
+
+    flex:1;
+
+    text-align:center;
+
+    margin:0 30px;
+}
+
+/* Right */
+
+.doctor-nav{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:22px;
+
+    white-space:nowrap;
+}
+
+.doctor-nav a{
+
+    color:white;
+
+    text-decoration:none;
+
+    font-size:16px;
+
+    font-weight:500;
+
+    padding-bottom:4px;
+
+    transition:.3s;
+}
+
+.doctor-nav a:hover{
+
+    color:#ffe082;
+}
+
+.doctor-nav a.active{
+
+    border-bottom:3px solid white;
+}
+
+/* Logout */
+
+.logout-btn{
+
+    border:none;
+
+    background:#ef4444;
+
+    color:white;
+
+    padding:10px 20px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    transition:.3s;
+}
+
+.logout-btn:hover{
+
+    background:#dc2626;
+}
+
+/* ===========================
+   PAGE CONTENT
+=========================== */
+
+.doctor-main{
+
+    width:100%;
+
+    padding:30px;
+
+    box-sizing:border-box;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:1100px){
+
+.doctor-navbar{
+
+    flex-wrap:wrap;
+
+    height:auto;
+
+    padding:15px 20px;
+
+}
+
+.doctor-logo{
+
+    width:100%;
+
+    text-align:center;
+
+    margin-bottom:10px;
+}
+
+.doctor-name{
+
+    width:100%;
+
+    text-align:center;
+
+    margin-bottom:15px;
+}
+
+.doctor-nav{
+
+    width:100%;
+
+    justify-content:center;
+
+    flex-wrap:wrap;
+
+    gap:15px;
+}
+
+.logout-btn{
+
+    margin-left:10px;
+}
+
+}
+
+@media(max-width:650px){
+
+.doctor-nav{
+
+    flex-direction:column;
+
+    gap:12px;
+}
+
+.doctor-main{
+
+    padding:15px;
+}
+
+}

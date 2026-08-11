@@ -1,0 +1,452 @@
+/* ========================================
+   DOCTOR REPORTS PAGE
+======================================== */
+
+.doctor-reports-page {
+    min-height: calc(100vh - 80px);
+    padding: 45px 65px;
+    background: #f4f7fc;
+    box-sizing: border-box;
+}
+
+
+/* ========================================
+   HEADER
+======================================== */
+
+.reports-header {
+    background: white;
+    border-radius: 20px;
+    padding: 30px 35px;
+    margin-bottom: 30px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+}
+
+.reports-header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    color: #172033;
+}
+
+.reports-header p {
+    margin: 0;
+    color: #667085;
+    font-size: 16px;
+}
+
+
+/* ========================================
+   REPORT COUNT
+======================================== */
+
+.reports-count {
+    min-width: 120px;
+    height: 90px;
+
+    border-radius: 16px;
+
+    background: linear-gradient(
+        135deg,
+        #ef3340,
+        #d7192d
+    );
+
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 0 8px 20px rgba(220, 35, 55, 0.25);
+}
+
+.reports-count span {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.reports-count small {
+    font-size: 13px;
+}
+
+
+/* ========================================
+   REPORT LIST
+======================================== */
+
+.reports-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+
+/* ========================================
+   REPORT CARD
+======================================== */
+
+.report-card {
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 30px 35px;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.07);
+
+    border-left: 5px solid #315bea;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.report-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.10);
+}
+
+
+/* ========================================
+   REPORT TOP
+======================================== */
+
+.report-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #edf0f5;
+}
+
+.report-top h2 {
+    margin: 0 0 6px;
+
+    font-size: 23px;
+
+    color: #172033;
+}
+
+.report-top p {
+    margin: 0;
+
+    color: #667085;
+
+    font-size: 14px;
+}
+
+
+/* ========================================
+   STATUS
+======================================== */
+
+.report-status {
+    padding: 9px 18px;
+
+    border-radius: 30px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.report-status.completed {
+    background: #dff7e8;
+    color: #15803d;
+}
+
+.report-status.pending {
+    background: #fff4cc;
+    color: #a16207;
+}
+
+.report-status.reviewed {
+    background: #e5edff;
+    color: #315bea;
+}
+
+
+/* ========================================
+   REPORT INFORMATION
+======================================== */
+
+.report-info {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+
+    padding: 25px 0;
+}
+
+.report-info div {
+    background: #f7f9fc;
+
+    padding: 17px;
+
+    border-radius: 12px;
+}
+
+.report-info span {
+    display: block;
+
+    color: #667085;
+
+    font-size: 13px;
+
+    margin-bottom: 7px;
+}
+
+.report-info strong {
+    display: block;
+
+    color: #172033;
+
+    font-size: 15px;
+}
+
+
+/* ========================================
+   RESULTS
+======================================== */
+
+.results-section {
+    margin-top: 5px;
+}
+
+.results-section h3 {
+    margin: 0 0 15px;
+
+    color: #172033;
+
+    font-size: 18px;
+}
+
+
+/* ========================================
+   RESULTS TABLE
+======================================== */
+
+.results-table {
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+.result-header,
+.result-row {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
+    gap: 20px;
+
+    padding: 14px 18px;
+}
+
+.result-header {
+    background: #f4f6fa;
+
+    font-weight: 700;
+
+    color: #475467;
+
+    font-size: 13px;
+}
+
+.result-row {
+    border-top: 1px solid #edf0f5;
+
+    color: #475467;
+
+    font-size: 14px;
+}
+
+.result-row strong {
+    color: #172033;
+}
+
+
+/* ========================================
+   DOCTOR NOTES
+======================================== */
+
+.doctor-notes {
+    margin-top: 22px;
+
+    padding: 18px 20px;
+
+    background: #f0f5ff;
+
+    border-left: 4px solid #315bea;
+
+    border-radius: 10px;
+}
+
+.doctor-notes h3 {
+    margin: 0 0 8px;
+
+    font-size: 16px;
+
+    color: #172033;
+}
+
+.doctor-notes p {
+    margin: 0;
+
+    color: #475467;
+
+    line-height: 1.6;
+}
+
+
+/* ========================================
+   LOADING / EMPTY / ERROR
+======================================== */
+
+.reports-message {
+    min-height: 300px;
+
+    background: white;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.message-icon,
+.loading-icon {
+    width: 70px;
+    height: 70px;
+
+    border-radius: 50%;
+
+    background: #fff0f2;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 32px;
+
+    margin-bottom: 15px;
+}
+
+.reports-message h2 {
+    margin: 5px 0 8px;
+
+    color: #172033;
+}
+
+.reports-message p {
+    margin: 0;
+
+    color: #667085;
+}
+
+.error-message h2 {
+    color: #dc2638;
+}
+
+.error-message button {
+    margin-top: 20px;
+
+    border: none;
+
+    background: #ef3340;
+
+    color: white;
+
+    padding: 11px 22px;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.error-message button:hover {
+    background: #d7192d;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 900px) {
+
+    .doctor-reports-page {
+        padding: 30px 20px;
+    }
+
+    .reports-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .reports-count {
+        width: 100%;
+    }
+
+    .report-info {
+        grid-template-columns: 1fr;
+    }
+
+    .result-header,
+    .result-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .report-card {
+        padding: 22px;
+    }
+
+    .report-top {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .reports-header h1 {
+        font-size: 26px;
+    }
+
+}

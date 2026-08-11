@@ -1,0 +1,227 @@
+/* ========================================
+   EDIT PROFILE PAGE
+======================================== */
+
+.edit-page {
+    min-height: calc(100vh - 80px);
+    background: #f4f7fc;
+    padding: 50px 20px;
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+
+/* ========================================
+   EDIT PROFILE CARD
+======================================== */
+
+.edit-card {
+    width: 100%;
+    max-width: 700px;
+
+    background: #ffffff;
+
+    border-radius: 20px;
+
+    padding: 35px 40px;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.08);
+
+    border: 1px solid #e5e7eb;
+}
+
+
+/* ========================================
+   TITLE
+======================================== */
+
+.edit-card h1 {
+    margin: 0 0 30px;
+
+    text-align: center;
+
+    color: #172554;
+
+    font-size: 30px;
+
+    font-weight: 700;
+}
+
+
+/* ========================================
+   FORM
+======================================== */
+
+.edit-card form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+
+/* ========================================
+   INPUTS
+======================================== */
+
+.edit-card input {
+    width: 100%;
+
+    padding: 14px 16px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #dbe2ea;
+
+    border-radius: 10px;
+
+    background: #f8fafc;
+
+    color: #1e293b;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+/* Placeholder */
+
+.edit-card input::placeholder {
+    color: #94a3b8;
+}
+
+
+/* Focus */
+
+.edit-card input:focus {
+    background: #ffffff;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* ========================================
+   SAVE BUTTON
+======================================== */
+
+.save-btn {
+    width: 100%;
+
+    margin-top: 10px;
+
+    padding: 14px 20px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+/* Hover */
+
+.save-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+
+/* Active */
+
+.save-btn:active {
+    transform: translateY(0);
+}
+
+
+/* ========================================
+   RESPONSIVE - TABLET
+======================================== */
+
+@media (max-width: 700px) {
+
+    .edit-page {
+        padding: 30px 15px;
+    }
+
+    .edit-card {
+        padding: 28px 25px;
+
+        border-radius: 16px;
+    }
+
+    .edit-card h1 {
+        font-size: 26px;
+
+        margin-bottom: 25px;
+    }
+
+}
+
+
+/* ========================================
+   RESPONSIVE - MOBILE
+======================================== */
+
+@media (max-width: 450px) {
+
+    .edit-page {
+        padding: 20px 10px;
+    }
+
+    .edit-card {
+        padding: 25px 18px;
+    }
+
+    .edit-card h1 {
+        font-size: 23px;
+    }
+
+    .edit-card input {
+        padding: 13px 14px;
+
+        font-size: 14px;
+    }
+
+    .save-btn {
+        padding: 13px 16px;
+
+        font-size: 15px;
+    }
+
+}

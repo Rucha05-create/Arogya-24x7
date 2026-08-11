@@ -1,0 +1,586 @@
+/* =========================================
+   DOCTOR APPOINTMENTS PAGE
+========================================= */
+
+.doctor-appointments {
+  padding: 35px 40px 60px;
+  background: #f5f7fb;
+  min-height: calc(100vh - 80px);
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.appointments-header {
+  margin-bottom: 30px;
+}
+
+.appointments-header h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+  font-weight: 700;
+  color: #172033;
+}
+
+.appointments-header p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 16px;
+}
+
+
+/* =========================================
+   APPOINTMENTS GRID
+========================================= */
+
+.appointments-grid {
+  display: flex;
+  flex-direction: column;
+
+  /* IMPORTANT:
+     Creates space between appointments
+  */
+  gap: 24px;
+
+  width: 100%;
+}
+
+
+/* =========================================
+   APPOINTMENT CARD
+========================================= */
+
+.appointment-card {
+  background: #ffffff;
+
+  border-radius: 18px;
+
+  padding: 25px 30px;
+
+  border-left: 5px solid #2563eb;
+
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.07);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  width: 100%;
+
+  box-sizing: border-box;
+}
+
+.appointment-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.10);
+}
+
+
+/* =========================================
+   TOP SECTION
+========================================= */
+
+.appointment-top {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding-bottom: 20px;
+
+  border-bottom: 1px dashed #d7dce5;
+}
+
+
+/* =========================================
+   PATIENT HEADING
+========================================= */
+
+.patient-heading {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+.patient-icon {
+  width: 52px;
+  height: 52px;
+
+  border-radius: 50%;
+
+  background: #eef2ff;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 26px;
+}
+
+.patient-heading h2 {
+  margin: 0 0 8px;
+
+  font-size: 22px;
+
+  color: #172033;
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+.status {
+  display: inline-block;
+
+  padding: 6px 14px;
+
+  border-radius: 20px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.status.pending {
+  background: #fff3cd;
+  color: #9a6700;
+}
+
+.status.approved {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status.completed {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status.rejected {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+
+/* =========================================
+   APPOINTMENT ID
+========================================= */
+
+.appointment-id {
+  color: #64748b;
+
+  font-size: 13px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.appointment-id span {
+  background: #f1f5f9;
+
+  padding: 6px 10px;
+
+  border-radius: 6px;
+
+  color: #475569;
+
+  font-family: monospace;
+
+  font-size: 12px;
+}
+
+
+/* =========================================
+   INFORMATION SECTION
+========================================= */
+
+.appointment-info {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr
+    1.4fr
+    1.5fr
+    1.2fr;
+
+  gap: 0;
+
+  padding: 22px 0;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+
+/* =========================================
+   INFO ITEM
+========================================= */
+
+.info-item {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 0 20px;
+
+  border-right: 1px solid #e5e7eb;
+
+  min-width: 0;
+}
+
+.info-item:first-child {
+  padding-left: 5px;
+}
+
+.info-item:last-child {
+  border-right: none;
+}
+
+
+/* =========================================
+   INFO ICON
+========================================= */
+
+.info-icon {
+  width: 40px;
+  height: 40px;
+
+  min-width: 40px;
+
+  border-radius: 10px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 18px;
+}
+
+.date-icon {
+  background: #eaf2ff;
+}
+
+.time-icon {
+  background: #fff0f0;
+}
+
+.test-icon {
+  background: #eafaf1;
+}
+
+.email-icon {
+  background: #f3edff;
+}
+
+.phone-icon {
+  background: #fff0f5;
+}
+
+
+/* =========================================
+   INFO TEXT
+========================================= */
+
+.info-item div:last-child {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  min-width: 0;
+}
+
+.info-item small {
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+.info-item strong {
+  color: #1e293b;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.appointment-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+
+  /* THIS creates spacing between buttons */
+  gap: 16px;
+
+  padding-top: 20px;
+}
+
+
+/* =========================================
+   ALL BUTTONS
+========================================= */
+
+.appointment-actions button {
+  border: none;
+
+  border-radius: 8px;
+
+  padding: 10px 22px;
+
+  min-width: 120px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.appointment-actions button:hover {
+  transform: translateY(-1px);
+
+  opacity: 0.9;
+}
+
+
+/* =========================================
+   APPROVE
+========================================= */
+
+.approve-btn {
+  background: #16a34a;
+
+  color: white;
+}
+
+
+/* =========================================
+   REJECT
+========================================= */
+
+.reject-btn {
+  background: #ef4444;
+
+  color: white;
+}
+
+
+/* =========================================
+   VIEW
+========================================= */
+
+.view-btn {
+  background: #ffffff;
+
+  color: #334155;
+
+  border: 1px solid #cbd5e1 !important;
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+.modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(15, 23, 42, 0.55);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  z-index: 1000;
+}
+
+.patient-modal {
+  background: white;
+
+  width: 450px;
+
+  max-width: 90%;
+
+  padding: 30px;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.patient-modal h2 {
+  margin-top: 0;
+
+  margin-bottom: 25px;
+}
+
+.patient-modal p {
+  margin: 12px 0;
+
+  color: #334155;
+}
+
+.close-btn {
+  margin-top: 20px;
+
+  padding: 10px 25px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: white;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .appointment-info {
+    grid-template-columns:
+      repeat(3, 1fr);
+
+    row-gap: 20px;
+  }
+
+  .info-item:nth-child(3) {
+    border-right: none;
+  }
+
+}
+
+
+@media (max-width: 750px) {
+
+  .doctor-appointments {
+    padding: 25px 15px;
+  }
+
+  .appointment-top {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .appointment-info {
+    grid-template-columns: 1fr;
+
+    gap: 15px;
+  }
+
+  .info-item {
+    border-right: none;
+
+    padding: 8px 0;
+  }
+
+  .appointment-actions {
+    justify-content: stretch;
+
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .appointment-actions button {
+    width: 100%;
+  }
+
+}
+
+.view-btn {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border: 1px solid #2563eb !important;
+
+    padding: 12px 22px !important;
+    min-width: 100px !important;
+    height: 48px !important;
+
+    border-radius: 9px !important;
+
+    font-size: 15px !important;
+    font-weight: 600 !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    cursor: pointer !important;
+
+    text-indent: 0 !important;
+    text-transform: none !important;
+
+    box-shadow: none !important;
+
+    transition: all 0.2s ease !important;
+}
+
+.view-btn:hover {
+    background: #1d4ed8 !important;
+    color: #ffffff !important;
+    border-color: #1d4ed8 !important;
+}
+
+.view-btn:active {
+    background: #1e40af !important;
+    color: #ffffff !important;
+}
+
+.view-btn:disabled {
+    opacity: 1 !important;
+    color: #ffffff !important;
+}
