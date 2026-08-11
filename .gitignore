@@ -1,0 +1,48 @@
+# =========================
+# Node
+# =========================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# =========================
+# Environment Variables
+# =========================
+
+.env
+.env.local
+.env.development
+.env.production
+
+
+# =========================
+# React
+# =========================
+
+frontend/build/
+frontend/.cache/
+
+
+# =========================
+# Backend
+# =========================
+
+backend/uploads/
+
+
+# =========================
+# Operating System
+# =========================
+
+.DS_Store
+Thumbs.db
+
+
+# =========================
+# VS Code
+# =========================
+
+.vscode/
