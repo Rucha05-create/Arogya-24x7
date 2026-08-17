@@ -1,0 +1,529 @@
+/* =========================================================
+   BOOK TEST PAGE
+   ========================================================= */
+
+.book-test-page {
+    min-height: 100vh;
+    padding: 40px 60px;
+    background: linear-gradient(
+        135deg,
+        #f4fbff 0%,
+        #eef8f5 50%,
+        #f8fcff 100%
+    );
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.book-test-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.book-test-header h1 {
+    margin: 0;
+    font-size: 36px;
+    font-weight: 700;
+    color: #123c69;
+}
+
+.book-test-header p {
+    margin-top: 10px;
+    color: #64748b;
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   MAIN BOOKING CONTAINER
+   ========================================================= */
+
+.booking-container {
+    max-width: 1100px;
+    margin: auto;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 35px;
+    box-shadow: 0 10px 35px rgba(15, 61, 92, 0.12);
+    border: 1px solid #e5eef5;
+}
+
+
+/* =========================================================
+   SECTION
+   ========================================================= */
+
+.booking-section {
+    margin-bottom: 30px;
+}
+
+.booking-section h2 {
+    margin-bottom: 18px;
+    font-size: 22px;
+    color: #123c69;
+    border-left: 5px solid #1e88a8;
+    padding-left: 12px;
+}
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+    background: #ffffff;
+    color: #1e293b;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #1e88a8;
+    box-shadow: 0 0 0 3px rgba(30, 136, 168, 0.12);
+}
+
+
+/* =========================================================
+   LAB SELECTION
+   ========================================================= */
+
+.lab-selection {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.lab-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px;
+    cursor: pointer;
+    background: #ffffff;
+    transition: all 0.25s ease;
+}
+
+.lab-card:hover {
+    border-color: #1e88a8;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(30, 136, 168, 0.12);
+}
+
+.lab-card.selected {
+    border-color: #1e88a8;
+    background: #effaff;
+    box-shadow: 0 6px 18px rgba(30, 136, 168, 0.15);
+}
+
+.lab-card h3 {
+    margin: 0 0 8px;
+    color: #123c69;
+    font-size: 18px;
+}
+
+.lab-card p {
+    margin: 5px 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   TEST SELECTION
+   ========================================================= */
+
+.test-selection {
+    margin-top: 10px;
+}
+
+.test-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 15px;
+}
+
+
+/* =========================================================
+   TEST CARD
+   ========================================================= */
+
+.test-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 15px 18px;
+
+    border: 1px solid #dbe4ec;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.test-card:hover {
+    border-color: #1e88a8;
+    background: #f5fcff;
+}
+
+.test-card.selected {
+    border-color: #1e88a8;
+    background: #effaff;
+}
+
+
+/* Checkbox */
+
+.test-card input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #1e88a8;
+    cursor: pointer;
+}
+
+.test-card span {
+    font-size: 15px;
+    font-weight: 500;
+    color: #334155;
+}
+
+
+/* =========================================================
+   SELECTED TESTS
+   ========================================================= */
+
+.selected-tests {
+    margin-top: 20px;
+    padding: 18px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.selected-tests h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #123c69;
+    font-size: 17px;
+}
+
+.selected-test-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px 12px;
+    margin-bottom: 8px;
+
+    background: #ffffff;
+    border-radius: 8px;
+
+    border: 1px solid #e5e7eb;
+}
+
+.selected-test-item span {
+    color: #334155;
+    font-size: 14px;
+}
+
+
+/* Remove test button */
+
+.remove-test-btn {
+    border: none;
+    background: transparent;
+    color: #dc2626;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 3px 7px;
+    border-radius: 5px;
+    transition: 0.2s ease;
+}
+
+.remove-test-btn:hover {
+    background: #fee2e2;
+}
+
+
+/* =========================================================
+   ADD CUSTOM TEST
+   ========================================================= */
+
+.custom-test-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.custom-test-row input {
+    flex: 1;
+    padding: 13px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+}
+
+.custom-test-row input:focus {
+    border-color: #1e88a8;
+    box-shadow: 0 0 0 3px rgba(30, 136, 168, 0.1);
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.add-test-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 9px;
+
+    background: #1e88a8;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.add-test-btn:hover {
+    background: #176d88;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   DATE + TIME
+   ========================================================= */
+
+.datetime-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+
+/* =========================================================
+   BOOK APPOINTMENT BUTTON
+   ========================================================= */
+
+.book-button-container {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.book-appointment-btn {
+    width: 100%;
+    max-width: 450px;
+
+    padding: 15px 25px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: linear-gradient(
+        135deg,
+        #1e88a8,
+        #176d88
+    );
+
+    color: white;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow: 0 7px 18px rgba(30, 136, 168, 0.25);
+
+    transition: all 0.25s ease;
+}
+
+.book-appointment-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(30, 136, 168, 0.3);
+}
+
+.book-appointment-btn:active {
+    transform: translateY(0);
+}
+
+.book-appointment-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.booking-error {
+    margin: 15px 0;
+    padding: 12px 15px;
+
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+
+    color: #dc2626;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   SUCCESS MESSAGE
+   ========================================================= */
+
+.booking-success {
+    margin: 15px 0;
+    padding: 12px 15px;
+
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+
+    color: #15803d;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-tests {
+    padding: 18px;
+    text-align: center;
+
+    color: #64748b;
+
+    background: #f8fafc;
+
+    border: 1px dashed #cbd5e1;
+
+    border-radius: 10px;
+
+    margin-top: 15px;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.loading-text {
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .book-test-page {
+        padding: 30px;
+    }
+
+    .booking-container {
+        padding: 28px;
+    }
+
+    .lab-selection {
+        grid-template-columns: 1fr;
+    }
+
+    .test-list {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .book-test-page {
+        padding: 20px 12px;
+    }
+
+    .booking-container {
+        padding: 20px 16px;
+        border-radius: 15px;
+    }
+
+    .book-test-header h1 {
+        font-size: 28px;
+    }
+
+    .book-test-header p {
+        font-size: 14px;
+    }
+
+    .booking-section h2 {
+        font-size: 19px;
+    }
+
+    .datetime-container {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .custom-test-row {
+        flex-direction: column;
+    }
+
+    .add-test-btn {
+        width: 100%;
+    }
+
+    .book-appointment-btn {
+        max-width: 100%;
+    }
+
+}

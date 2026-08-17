@@ -1,43 +1,91 @@
 const mongoose = require("mongoose");
 
 const appointmentSchema = new mongoose.Schema(
-  {
-    patientId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+    {
+        // ==================================================
+        // PATIENT
+        // ==================================================
+
+        patientId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
+
+        // ==================================================
+        // DOCTOR
+        // ==================================================
+
+        doctorId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Doctor",
+            default: null
+        },
+
+        // ==================================================
+        // LABORATORY
+        // ==================================================
+
+        labId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Lab",
+            required: true
+        },
+
+        // ==================================================
+        // TESTS
+        // ==================================================
+
+        tests: [
+            {
+                type: String,
+                trim: true
+            }
+        ],
+
+        // ==================================================
+        // APPOINTMENT STATUS
+        // ==================================================
+
+        status: {
+            type: String,
+            enum: [
+                "Pending",
+                "Approved",
+                "Rejected",
+                "Completed"
+            ],
+            default: "Pending"
+        },
+
+        // ==================================================
+        // APPOINTMENT DATE
+        // ==================================================
+
+        date: {
+            type: String,
+            required: true
+        },
+
+        // ==================================================
+        // APPOINTMENT TIME
+        // ==================================================
+
+        time: {
+            type: String,
+            required: true
+        }
     },
-
-    doctorId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Doctor"
-    },
-
-    labId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Lab"
-    },
-
-    tests: [
-      {
-        type: String
-      }
-    ],
-
-    status: {
-      type: String,
-      default: "Pending"
-    },
-
-    date: String,
-
-    time: String
-  },
-  {
-    timestamps: true
-  }
+    {
+        timestamps: true
+    }
 );
 
+// ======================================================
+// EXPORT MODEL
+// ======================================================
+
 module.exports = mongoose.model(
-  "Appointment",
-  appointmentSchema
+    "Appointment",
+    appointmentSchema
 );

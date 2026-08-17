@@ -36,6 +36,10 @@ const updateUser = async (req, res) => {
     try {
 
         const {
+            name,
+            email,
+            age,
+            gender,
             phone,
             bloodGroup,
             height,
@@ -44,7 +48,8 @@ const updateUser = async (req, res) => {
             allergies,
             diseases,
             medications,
-            emergencyContact
+            emergencyContact,
+            city
         } = req.body;
 
 
@@ -57,6 +62,10 @@ const updateUser = async (req, res) => {
             req.params.id,
 
             {
+                name,
+                email,
+                age,
+                gender,
                 phone,
                 bloodGroup,
                 height,
@@ -65,7 +74,8 @@ const updateUser = async (req, res) => {
                 allergies,
                 diseases,
                 medications,
-                emergencyContact
+                emergencyContact,
+                city
             },
 
             {

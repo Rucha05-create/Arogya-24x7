@@ -51,6 +51,7 @@ import Patients from "./pages/Patients";
 import Prescriptions from "./pages/Prescriptions";
 import LabBookingsPage from "./pages/LabBookingsPage";
 import UploadReport from "./pages/UploadReport";
+import LabReports from "./pages/LabReports";
 
 // ================= GENERAL =================
 
@@ -63,44 +64,90 @@ import DoctorDashboard from "./pages/DoctorDashboard";
 import DoctorAppointments from "./pages/DoctorAppointments";
 import DoctorPatients from "./pages/DoctorPatients";
 import DoctorReports from "./pages/DoctorReports";
-import DoctorProfile from "./pages/DoctorProfile";
+
 
 // ======================================================
 // APP CONTENT
 // ======================================================
 
 function AppContent() {
+
   const location = useLocation();
 
-  // Hide the common/public Navbar on all Doctor pages
-  const hideNavbar = location.pathname.startsWith("/doctor");
+  // ======================================================
+  // HIDE COMMON NAVBAR ON DOCTOR PAGES
+  // ======================================================
+
+  const hideNavbar =
+    location.pathname.startsWith("/doctor");
 
   return (
     <>
+
+      {/* ==================================================
+          COMMON NAVBAR
+      ================================================== */}
+
       {!hideNavbar && <Navbar />}
 
+
       <Routes>
+
+
         {/* ==================================================
             PUBLIC
         ================================================== */}
 
-        <Route path="/" element={<Navigate to="/client/home" replace />} />
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to="/client/home"
+              replace
+            />
+          }
+        />
 
-        <Route path="/client/home" element={<Home />} />
+        <Route
+          path="/client/home"
+          element={<Home />}
+        />
 
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
-        <Route path="/profile" element={<Dashboard />} />
+        <Route
+          path="/profile"
+          element={<Dashboard />}
+        />
 
-        <Route path="/book" element={<BookTest />} />
+        <Route
+          path="/book"
+          element={<BookTest />}
+        />
 
-        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route
+          path="/edit-profile"
+          element={<EditProfile />}
+        />
 
-        <Route path="/packages" element={<Packages />} />
+        <Route
+          path="/packages"
+          element={<Packages />}
+        />
 
-        <Route path="/vendors" element={<Vendors />} />
+        <Route
+          path="/vendors"
+          element={<Vendors />}
+        />
+
 
         {/* ==================================================
             LOGIN
@@ -136,6 +183,7 @@ function AppContent() {
           element={<ClientRegister />}
         />
 
+
         {/* ==================================================
             CLIENT
         ================================================== */}
@@ -148,6 +196,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
 
         {/* ==================================================
             ADMIN
@@ -164,31 +213,56 @@ function AppContent() {
 
         <Route
           path="/manage-labs"
-          element={<ManageLabs />}
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <ManageLabs />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/manage-tests"
-          element={<ManageTests />}
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <ManageTests />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/manage-packages"
-          element={<ManagePackages />}
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <ManagePackages />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/manage-doctors"
-          element={<ManageDoctors />}
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <ManageDoctors />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/manage-clients"
-          element={<ManageClients />}
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <ManageClients />
+            </ProtectedRoute>
+          }
         />
+
 
         {/* ==================================================
             LAB
+        ================================================== */}
+
+        {/* ==================================================
+            LAB DASHBOARD
         ================================================== */}
 
         <Route
@@ -200,34 +274,156 @@ function AppContent() {
           }
         />
 
-        <Route
-          path="/patients"
-          element={<Patients />}
-        />
+
+        {/* ==================================================
+            LAB BOOKINGS
+        ================================================== */}
+
+        {/* Main Lab Bookings Route */}
 
         <Route
-          path="/prescriptions"
-          element={<Prescriptions />}
+          path="/lab/bookings"
+          element={
+            <ProtectedRoute allowedRole="lab">
+              <LabBookingsPage />
+            </ProtectedRoute>
+          }
         />
+
+        {/* Old Route - Compatibility */}
 
         <Route
           path="/lab-bookings"
-          element={<LabBookingsPage />}
+          element={
+            <ProtectedRoute allowedRole="lab">
+              <LabBookingsPage />
+            </ProtectedRoute>
+          }
         />
+
+
+        {/* ==================================================
+            LAB PATIENTS
+        ================================================== */}
+
+        <Route
+          path="/lab/patients"
+          element={
+            <ProtectedRoute allowedRole="lab">
+              <Patients />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Old Route - Compatibility */}
+
+        <Route
+          path="/patients"
+          element={
+            <ProtectedRoute allowedRole="lab">
+              <Patients />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* ==================================================
+            LAB PRESCRIPTIONS
+        ================================================== */}
+
+        <Route
+          path="/lab/prescriptions"
+          element={
+            <ProtectedRoute allowedRole="lab">
+              <Prescriptions />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Old Route - Compatibility */}
+
+        <Route
+          path="/prescriptions"
+          element={
+            <ProtectedRoute allowedRole="lab">
+              <Prescriptions />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* ==================================================
+            LAB UPLOAD REPORT
+        ================================================== */}
+
+        {/* 
+          This is the page where the laboratory
+          uploads a new report.
+        */}
+
+        <Route
+          path="/lab/reports"
+          element={
+            <ProtectedRoute allowedRole="lab">
+              <UploadReport />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Old Upload Report Route - Compatibility */}
 
         <Route
           path="/upload-report"
-          element={<UploadReport />}
+          element={
+            <ProtectedRoute allowedRole="lab">
+              <UploadReport />
+            </ProtectedRoute>
+          }
         />
 
+
         {/* ==================================================
-            GENERAL
+            LAB REPORTS
+        ================================================== */}
+
+        {/* 
+          This page displays reports already
+          created/uploaded by the laboratory.
+        */}
+
+        <Route
+          path="/lab-reports"
+          element={
+            <ProtectedRoute allowedRole="lab">
+              <LabReports />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* 
+          Additional clean route for Lab Reports.
+        */}
+
+        <Route
+          path="/lab/report-list"
+          element={
+            <ProtectedRoute allowedRole="lab">
+              <LabReports />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* ==================================================
+            GENERAL APPOINTMENTS
         ================================================== */}
 
         <Route
           path="/appointments"
           element={<Appointments />}
         />
+
 
         {/* ==================================================
             DOCTOR
@@ -241,7 +437,10 @@ function AppContent() {
             </ProtectedRoute>
           }
         >
-          {/* /doctor → /doctor/dashboard */}
+
+          {/* ==================================================
+              /doctor → /doctor/dashboard
+          ================================================== */}
 
           <Route
             index
@@ -253,41 +452,48 @@ function AppContent() {
             }
           />
 
-          {/* Doctor Dashboard */}
+
+          {/* ==================================================
+              DOCTOR DASHBOARD
+          ================================================== */}
 
           <Route
             path="dashboard"
             element={<DoctorDashboard />}
           />
 
-          {/* Doctor Appointments */}
+
+          {/* ==================================================
+              DOCTOR APPOINTMENTS
+          ================================================== */}
 
           <Route
             path="appointments"
             element={<DoctorAppointments />}
           />
 
-          {/* Doctor Patients */}
+
+          {/* ==================================================
+              DOCTOR PATIENTS
+          ================================================== */}
 
           <Route
             path="patients"
             element={<DoctorPatients />}
           />
 
-          {/* Doctor Reports */}
+
+          {/* ==================================================
+              DOCTOR REPORTS
+          ================================================== */}
 
           <Route
             path="reports"
             element={<DoctorReports />}
           />
 
-          {/* Doctor Profile */}
-
-          <Route
-            path="profile"
-            element={<DoctorProfile />}
-          />
         </Route>
+
 
         {/* ==================================================
             INVALID / UNKNOWN ROUTE
@@ -302,21 +508,30 @@ function AppContent() {
             />
           }
         />
+
       </Routes>
+
     </>
   );
 }
+
 
 // ======================================================
 // MAIN APP
 // ======================================================
 
 function App() {
+
   return (
+
     <BrowserRouter>
+
       <AppContent />
+
     </BrowserRouter>
+
   );
+
 }
 
 export default App;

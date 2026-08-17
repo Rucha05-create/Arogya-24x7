@@ -1,8 +1,9 @@
 const Doctor = require("../models/Doctor");
 const User = require("../models/User");
+const Appointment = require("../models/Appointment");
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
 
 // ========================================
 // Generate JWT Token
@@ -75,8 +76,11 @@ const registerDoctor = async (req, res) => {
         const doctor = await Doctor.create({
 
             doctorId,
+
             password: hashedPassword,
+
             name,
+
             specialization
 
         });
@@ -148,6 +152,7 @@ const loginDoctor = async (req, res) => {
         const isMatch = await bcrypt.compare(
 
             password,
+
             doctor.password
 
         );
@@ -173,6 +178,7 @@ const loginDoctor = async (req, res) => {
             token: generateToken(
 
                 doctor._id,
+
                 "doctor"
 
             ),
@@ -261,32 +267,163 @@ const getDoctors = async (req, res) => {
 
 
 // ========================================
-// Get All Registered Patients
+// Get Patients Assigned to Logged-in Doctor
 // ========================================
-
-// ==========================
-// Get All Registered Patients
-// ==========================
 
 const getPatients = async (req, res) => {
 
     try {
 
-        // Get all registered users
-        // Do NOT filter by role because existing
-        // users may not have a role field.
+        /*
+         * The logged-in doctor's ID comes
+         * from the JWT authentication.
+         *
+         * Your login token contains:
+         *
+         * {
+         *     id,
+         *     role: "doctor"
+         * }
+         */
 
-        const patients = await User
-            .find({})
-            .select("-password")
-            .sort({ createdAt: -1 });
+        const doctorId = req.user?.id;
+
+
+        // ========================================
+        // Check Doctor ID
+        // ========================================
+
+        if (!doctorId) {
+
+            return res.status(401).json({
+
+                message:
+                    "Doctor authentication required"
+
+            });
+
+        }
+
 
         console.log(
-            "Registered Patients:",
+            "Logged-in Doctor ID:",
+            doctorId
+        );
+
+
+        // ========================================
+        // Find Active Appointments
+        // for this Doctor
+        // ========================================
+
+        const appointments =
+            await Appointment.find({
+
+                doctorId: doctorId,
+
+                /*
+                 * We only want patients who are
+                 * currently being treated / have
+                 * an active appointment.
+                 *
+                 * Completed and Cancelled
+                 * appointments are excluded.
+                 */
+
+                status: {
+                    $nin: [
+                        "Completed",
+                        "Cancelled"
+                    ]
+                }
+
+            });
+
+
+        console.log(
+            "Doctor Appointments:",
+            appointments
+        );
+
+
+        // ========================================
+        // No Active Appointments
+        // ========================================
+
+        if (
+            appointments.length === 0
+        ) {
+
+            return res.status(200).json([]);
+
+        }
+
+
+        // ========================================
+        // Get Unique Patient IDs
+        // ========================================
+
+        const patientIds = [
+
+            ...new Set(
+
+                appointments
+
+                    .filter(
+                        appointment =>
+                            appointment.patientId
+                    )
+
+                    .map(
+                        appointment =>
+                            appointment.patientId.toString()
+                    )
+
+            )
+
+        ];
+
+
+        console.log(
+            "Patient IDs:",
+            patientIds
+        );
+
+
+        // ========================================
+        // Fetch Patients
+        // ========================================
+
+        const patients = await User
+
+            .find({
+
+                _id: {
+                    $in: patientIds
+                }
+
+            })
+
+            .select("-password")
+
+            .sort({
+                createdAt: -1
+            });
+
+
+        console.log(
+            "Doctor Patients:",
             patients
         );
 
-        res.status(200).json(patients);
+
+        // ========================================
+        // Send Patients
+        // ========================================
+
+        res.status(200).json(
+            patients
+        );
 
     }
 
@@ -297,11 +434,14 @@ const getPatients = async (req, res) => {
             error
         );
 
+
         res.status(500).json({
 
-            message: "Unable to fetch patients",
+            message:
+                "Unable to fetch doctor's patients",
 
-            error: error.message
+            error:
+                error.message
 
         });
 
@@ -321,8 +461,11 @@ const updateDoctor = async (req, res) => {
         const {
 
             name,
+
             doctorId,
+
             specialization,
+
             password
 
         } = req.body;
@@ -331,29 +474,45 @@ const updateDoctor = async (req, res) => {
         const updateData = {
 
             name,
+
             doctorId,
+
             specialization
 
         };
 
 
-        // Update password only if provided
+        // ========================================
+        // Update Password Only If Provided
+        // ========================================
 
         if (
+
             password &&
+
             password.trim() !== ""
+
         ) {
 
             updateData.password =
+
                 await bcrypt.hash(
+
                     password,
+
                     10
+
                 );
 
         }
 
 
+        // ========================================
+        // Update Doctor
+        // ========================================
+
         const doctor =
+
             await Doctor.findByIdAndUpdate(
 
                 req.params.id,
@@ -361,7 +520,11 @@ const updateDoctor = async (req, res) => {
                 updateData,
 
                 {
-                    new: true
+
+                    new: true,
+
+                    runValidators: true
+
                 }
 
             );

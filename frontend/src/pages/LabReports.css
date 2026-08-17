@@ -1,0 +1,329 @@
+.labReportsPage {
+  min-height: calc(100vh - 80px);
+
+  padding: 45px 7%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f4f8ff,
+      #eef5ff
+    );
+}
+
+
+/* HEADER */
+
+.reportsHeader {
+  max-width: 1200px;
+
+  margin: 0 auto 35px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+.reportsHeader span {
+  font-size: 12px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+
+  color: #2874d0;
+}
+
+.reportsHeader h1 {
+  margin: 7px 0;
+
+  font-size: 35px;
+
+  color: #173f6d;
+}
+
+.reportsHeader p {
+  margin: 0;
+
+  color: #718096;
+}
+
+.reportsHeader button {
+  border: none;
+
+  padding: 14px 22px;
+
+  border-radius: 11px;
+
+  background: #1769c2;
+
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* EMPTY */
+
+.reportsEmpty {
+  max-width: 800px;
+
+  margin: 70px auto;
+
+  background: white;
+
+  border-radius: 22px;
+
+  padding: 60px 30px;
+
+  text-align: center;
+
+  box-shadow:
+    0 15px 40px
+    rgba(31, 78, 121, 0.1);
+}
+
+.emptyReportIcon {
+  width: 80px;
+  height: 80px;
+
+  margin: 0 auto 20px;
+
+  border-radius: 50%;
+
+  background: #edf5ff;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 35px;
+}
+
+.reportsEmpty h2 {
+  color: #173f6d;
+}
+
+.reportsEmpty p {
+  color: #718096;
+
+  margin-bottom: 25px;
+}
+
+.reportsEmpty button {
+  border: none;
+
+  background: #1769c2;
+
+  color: white;
+
+  padding: 13px 22px;
+
+  border-radius: 10px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* GRID */
+
+.reportsGrid {
+  max-width: 1200px;
+
+  margin: auto;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(300px, 1fr)
+    );
+
+  gap: 22px;
+}
+
+
+/* CARD */
+
+.reportCard {
+  background: white;
+
+  border-radius: 18px;
+
+  padding: 23px;
+
+  box-shadow:
+    0 10px 30px
+    rgba(31, 78, 121, 0.1);
+
+  transition: 0.25s;
+}
+
+.reportCard:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 16px 35px
+    rgba(31, 78, 121, 0.15);
+}
+
+.reportCardTop {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 18px;
+}
+
+.reportIcon {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 13px;
+
+  background: #edf5ff;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 23px;
+}
+
+.reportStatus {
+  background: #eaf8ef;
+
+  color: #198754;
+
+  padding: 6px 11px;
+
+  border-radius: 20px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.reportCard h3 {
+  margin: 0 0 8px;
+
+  color: #173f6d;
+
+  font-size: 20px;
+}
+
+.reportTest {
+  color: #2874d0;
+
+  font-weight: 600;
+}
+
+.reportInfo {
+  border-top: 1px solid #edf1f6;
+
+  border-bottom: 1px solid #edf1f6;
+
+  padding: 14px 0;
+
+  margin: 18px 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  color: #718096;
+
+  font-size: 13px;
+}
+
+.reportActions {
+  display: flex;
+
+  gap: 10px;
+}
+
+.reportActions a {
+  flex: 1;
+
+  text-align: center;
+
+  text-decoration: none;
+
+  padding: 11px;
+
+  border-radius: 9px;
+
+  background: #edf5ff;
+
+  color: #1769c2;
+
+  font-weight: 700;
+
+  font-size: 13px;
+}
+
+.reportActions a:hover {
+  background: #dcecff;
+}
+
+
+/* ERROR */
+
+.reportError {
+  max-width: 1200px;
+
+  margin: 0 auto 20px;
+
+  padding: 14px;
+
+  border-radius: 10px;
+
+  background: #fff0f0;
+
+  color: #c53030;
+}
+
+
+/* LOADING */
+
+.reportsLoading {
+  text-align: center;
+
+  padding: 80px;
+
+  color: #718096;
+
+  font-size: 18px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 700px) {
+
+  .labReportsPage {
+    padding: 30px 18px;
+  }
+
+  .reportsHeader {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 20px;
+  }
+
+}
