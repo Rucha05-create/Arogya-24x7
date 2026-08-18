@@ -2,9 +2,70 @@ const mongoose = require("mongoose");
 
 const Appointment = require("../models/Appointment");
 const Lab = require("../models/Lab");
+const Coupon = require("../models/Coupon");
+
 
 // ======================================================
-// Book Appointment
+// NORMALIZE ROLE
+// ======================================================
+
+const normalizeRole = (role) => {
+
+    const value = String(role || "")
+        .toLowerCase()
+        .trim()
+        .replace(/-/g, "_")
+        .replace(/\s+/g, "_");
+
+
+    if (
+        value === "health_worker" ||
+        value === "healthworker" ||
+        value === "sahash_employee" ||
+        value === "sahashemployee" ||
+        value === "employee" ||
+        value === "staff"
+    ) {
+
+        return "employee";
+
+    }
+
+
+    if (
+        value === "social_worker" ||
+        value === "socialworker"
+    ) {
+
+        return "social_worker";
+
+    }
+
+
+    if (value === "volunteer") {
+
+        return "volunteer";
+
+    }
+
+
+    if (
+        value === "client" ||
+        value === "user" ||
+        value === "patient"
+    ) {
+
+        return "client";
+
+    }
+
+
+    return value;
+};
+
+
+// ======================================================
+// BOOK APPOINTMENT
 // ======================================================
 
 const bookAppointment = async (req, res) => {
@@ -16,8 +77,35 @@ const bookAppointment = async (req, res) => {
             doctorId,
             labId,
             date,
-            time
+            time,
+
+            coupon,
+            discount,
+            specialId,
+            totalAmount,
+            discountAmount,
+            finalAmount
+
         } = req.body;
+
+
+        // ==================================================
+        // CHECK AUTHENTICATION
+        // ==================================================
+
+        if (
+            !req.user ||
+            !req.user.id
+        ) {
+
+            return res.status(401).json({
+
+                message:
+                    "Authentication required"
+
+            });
+
+        }
 
 
         // ==================================================
@@ -41,6 +129,37 @@ const bookAppointment = async (req, res) => {
 
 
         // ==================================================
+        // REMOVE EMPTY TESTS
+        // ==================================================
+
+        const validTests =
+            tests
+                .filter(
+                    (test) =>
+                        typeof test === "string" &&
+                        test.trim() !== ""
+                )
+                .map(
+                    (test) =>
+                        test.trim()
+                );
+
+
+        if (
+            validTests.length === 0
+        ) {
+
+            return res.status(400).json({
+
+                message:
+                    "Please select at least one valid test"
+
+            });
+
+        }
+
+
+        // ==================================================
         // VALIDATE LAB
         // ==================================================
 
@@ -57,7 +176,9 @@ const bookAppointment = async (req, res) => {
 
 
         if (
-            !mongoose.Types.ObjectId.isValid(labId)
+            !mongoose.Types.ObjectId.isValid(
+                labId
+            )
         ) {
 
             return res.status(400).json({
@@ -71,10 +192,35 @@ const bookAppointment = async (req, res) => {
 
 
         // ==================================================
+        // CHECK LAB EXISTS
+        // ==================================================
+
+        const lab =
+            await Lab.findById(
+                labId
+            );
+
+
+        if (!lab) {
+
+            return res.status(404).json({
+
+                message:
+                    "Laboratory not found"
+
+            });
+
+        }
+
+
+        // ==================================================
         // VALIDATE DATE AND TIME
         // ==================================================
 
-        if (!date || !time) {
+        if (
+            !date ||
+            !time
+        ) {
 
             return res.status(400).json({
 
@@ -84,6 +230,320 @@ const bookAppointment = async (req, res) => {
             });
 
         }
+
+
+        // ==================================================
+        // PAYMENT VARIABLES
+        // ==================================================
+
+        let appliedCoupon = null;
+
+        let appliedDiscount = 0;
+
+        let appliedSpecialId = "";
+
+        let bookingTotal =
+            Number(totalAmount || 0);
+
+        let bookingDiscountAmount = 0;
+
+        let bookingFinal = 0;
+
+
+        // ==================================================
+        // VALIDATE TOTAL AMOUNT
+        // ==================================================
+
+        if (
+            Number.isNaN(bookingTotal) ||
+            bookingTotal < 0
+        ) {
+
+            bookingTotal = 0;
+
+        }
+
+
+        // ==================================================
+        // COUPON VALIDATION
+        // ==================================================
+
+        if (
+            coupon &&
+            String(coupon).trim() !== ""
+        ) {
+
+            // ------------------------------------------------
+            // FIND COUPON
+            // ------------------------------------------------
+
+            appliedCoupon =
+                await Coupon.findOne({
+
+                    code:
+                        String(coupon)
+                            .trim()
+                            .toUpperCase()
+
+                });
+
+
+            if (!appliedCoupon) {
+
+                return res.status(400).json({
+
+                    message:
+                        "Invalid coupon code"
+
+                });
+
+            }
+
+
+            // ------------------------------------------------
+            // CHECK COUPON ACTIVE
+            // ------------------------------------------------
+
+            if (
+                appliedCoupon.isActive === false
+            ) {
+
+                return res.status(400).json({
+
+                    message:
+                        "This coupon is currently inactive"
+
+                });
+
+            }
+
+
+            // ------------------------------------------------
+            // CHECK EXPIRY
+            // ------------------------------------------------
+
+            if (
+                appliedCoupon.expiryDate &&
+                new Date(
+                    appliedCoupon.expiryDate
+                ) < new Date()
+            ) {
+
+                return res.status(400).json({
+
+                    message:
+                        "This coupon has expired"
+
+                });
+
+            }
+
+
+            // ------------------------------------------------
+            // GET USER ROLE
+            // ------------------------------------------------
+
+            const normalizedRole =
+                normalizeRole(
+                    req.user.role
+                );
+
+
+            // ------------------------------------------------
+            // COUPON ROLE
+            // ------------------------------------------------
+
+            const couponRole =
+                normalizeRole(
+                    appliedCoupon.allowedRole
+                );
+
+
+            // ------------------------------------------------
+            // CHECK ROLE
+            // ------------------------------------------------
+
+            if (
+                couponRole !==
+                normalizedRole
+            ) {
+
+                return res.status(403).json({
+
+                    message:
+                        "This coupon is not available for your account type."
+
+                });
+
+            }
+
+
+            // ------------------------------------------------
+            // CHECK WHETHER ID IS REQUIRED
+            // ------------------------------------------------
+
+            const requiresSpecialId =
+                appliedCoupon.requiresId === true ||
+                [
+                    "volunteer",
+                    "employee",
+                    "social_worker"
+                ].includes(
+                    normalizedRole
+                );
+
+
+            if (requiresSpecialId) {
+
+                if (
+                    !specialId ||
+                    String(
+                        specialId
+                    ).trim() === ""
+                ) {
+
+                    return res.status(400).json({
+
+                        message:
+                            "Please enter your valid ID to avail this discount."
+
+                    });
+
+                }
+
+
+                if (
+                    String(
+                        specialId
+                    ).trim().length < 3
+                ) {
+
+                    return res.status(400).json({
+
+                        message:
+                            "Please enter a valid ID."
+
+                    });
+
+                }
+
+
+                appliedSpecialId =
+                    String(
+                        specialId
+                    ).trim()
+                    .toUpperCase();
+
+
+                // ------------------------------------------------
+                // CHECK SPECIFIC ELIGIBLE ID
+                // ------------------------------------------------
+
+                if (
+                    appliedCoupon.eligibleId &&
+                    String(
+                        appliedCoupon.eligibleId
+                    ).trim() !== ""
+                ) {
+
+                    if (
+                        appliedSpecialId !==
+                        String(
+                            appliedCoupon.eligibleId
+                        )
+                            .trim()
+                            .toUpperCase()
+                    ) {
+
+                        return res.status(403).json({
+
+                            message:
+                                "This coupon is not valid for the entered ID."
+
+                        });
+
+                    }
+
+                }
+
+            }
+
+
+            // ------------------------------------------------
+            // GET DISCOUNT
+            // ------------------------------------------------
+
+            appliedDiscount =
+                Number(
+                    appliedCoupon.discount || 0
+                );
+
+
+            // ------------------------------------------------
+            // SAFETY CHECK
+            // ------------------------------------------------
+
+            if (
+                appliedDiscount < 0 ||
+                appliedDiscount > 100
+            ) {
+
+                return res.status(400).json({
+
+                    message:
+                        "Invalid coupon discount."
+
+                });
+
+            }
+
+        }
+
+
+        // ==================================================
+        // CALCULATE DISCOUNT
+        // ==================================================
+
+        if (
+            bookingTotal > 0 &&
+            appliedDiscount > 0
+        ) {
+
+            bookingDiscountAmount =
+                (
+                    bookingTotal *
+                    appliedDiscount
+                ) / 100;
+
+        } else {
+
+            bookingDiscountAmount = 0;
+
+        }
+
+
+        // ==================================================
+        // CALCULATE FINAL AMOUNT
+        // ==================================================
+
+        bookingFinal =
+            bookingTotal -
+            bookingDiscountAmount;
+
+
+        bookingFinal =
+            Math.max(
+                0,
+                Number(
+                    bookingFinal.toFixed(2)
+                )
+            );
+
+
+        bookingDiscountAmount =
+            Number(
+                bookingDiscountAmount.toFixed(2)
+            );
 
 
         // ==================================================
@@ -103,7 +563,10 @@ const bookAppointment = async (req, res) => {
                     labId,
 
                 tests:
-                    tests,
+                    validTests,
+
+                status:
+                    "Pending",
 
                 date:
                     date,
@@ -111,29 +574,95 @@ const bookAppointment = async (req, res) => {
                 time:
                     time,
 
-                status:
-                    "Pending"
+
+                // ------------------------------------------
+                // COUPON
+                // ------------------------------------------
+
+                coupon:
+                    appliedCoupon
+                        ? appliedCoupon.code
+                        : "",
+
+
+                // ------------------------------------------
+                // DISCOUNT PERCENTAGE
+                // ------------------------------------------
+
+                discount:
+                    appliedDiscount,
+
+
+                // ------------------------------------------
+                // DISCOUNT AMOUNT
+                // ------------------------------------------
+
+                discountAmount:
+                    bookingDiscountAmount,
+
+
+                // ------------------------------------------
+                // SPECIAL ID
+                // ------------------------------------------
+
+                specialId:
+                    appliedSpecialId,
+
+
+                // ------------------------------------------
+                // TOTAL AMOUNT
+                // ------------------------------------------
+
+                totalAmount:
+                    bookingTotal,
+
+
+                // ------------------------------------------
+                // FINAL AMOUNT
+                // ------------------------------------------
+
+                finalAmount:
+                    bookingFinal
 
             });
 
 
         // ==================================================
-        // POPULATE APPOINTMENT
+        // POPULATE PATIENT
         // ==================================================
 
         await appointment.populate(
+
             "patientId",
-            "name email phone age gender bloodGroup"
+
+            "name email phone age gender bloodGroup height weight address allergies disease diseases medications emergencyContact city status"
+
         );
 
+
+        // ==================================================
+        // POPULATE DOCTOR
+        // ==================================================
+
         await appointment.populate(
+
             "doctorId",
-            "name email phone specialization"
+
+            "name email phone specialization doctorId"
+
         );
 
+
+        // ==================================================
+        // POPULATE LAB
+        // ==================================================
+
         await appointment.populate(
+
             "labId",
+
             "labId labName location tests"
+
         );
 
 
@@ -141,7 +670,7 @@ const bookAppointment = async (req, res) => {
         // RESPONSE
         // ==================================================
 
-        res.status(201).json({
+        return res.status(201).json({
 
             message:
                 "Appointment booked successfully",
@@ -153,6 +682,7 @@ const bookAppointment = async (req, res) => {
 
     }
 
+
     catch (err) {
 
         console.error(
@@ -160,7 +690,7 @@ const bookAppointment = async (req, res) => {
             err
         );
 
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to book appointment",
@@ -176,12 +706,27 @@ const bookAppointment = async (req, res) => {
 
 
 // ======================================================
-// Client Appointments
+// CLIENT APPOINTMENTS
 // ======================================================
 
 const getAppointments = async (req, res) => {
 
     try {
+
+        if (
+            !req.user ||
+            !req.user.id
+        ) {
+
+            return res.status(401).json({
+
+                message:
+                    "Authentication required"
+
+            });
+
+        }
+
 
         const appointments =
             await Appointment.find({
@@ -192,13 +737,27 @@ const getAppointments = async (req, res) => {
             })
 
             .populate(
-                "doctorId",
-                "name email phone"
+
+                "patientId",
+
+                "name email phone age gender bloodGroup"
+
             )
 
             .populate(
+
+                "doctorId",
+
+                "name email phone specialization"
+
+            )
+
+            .populate(
+
                 "labId",
+
                 "labId labName location tests"
+
             )
 
             .sort({
@@ -209,7 +768,7 @@ const getAppointments = async (req, res) => {
             });
 
 
-        res.status(200).json(
+        return res.status(200).json(
 
             appointments
 
@@ -217,14 +776,18 @@ const getAppointments = async (req, res) => {
 
     }
 
+
     catch (err) {
 
         console.error(
+
             "Get Client Appointments Error:",
+
             err
+
         );
 
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to fetch appointments",
@@ -240,7 +803,7 @@ const getAppointments = async (req, res) => {
 
 
 // ======================================================
-// Doctor Appointments
+// DOCTOR APPOINTMENTS
 // ======================================================
 
 const getDoctorAppointments = async (req, res) => {
@@ -251,18 +814,27 @@ const getDoctorAppointments = async (req, res) => {
             await Appointment.find()
 
             .populate(
+
                 "patientId",
-                "name email phone age bloodGroup"
+
+                "name email phone age gender bloodGroup height weight address allergies disease diseases medications emergencyContact city status"
+
             )
 
             .populate(
+
                 "doctorId",
-                "name email phone specialization"
+
+                "name email phone specialization doctorId"
+
             )
 
             .populate(
+
                 "labId",
+
                 "labId labName location tests"
+
             )
 
             .sort({
@@ -274,12 +846,15 @@ const getDoctorAppointments = async (req, res) => {
 
 
         console.log(
+
             "Doctor Appointments:",
+
             appointments.length
+
         );
 
 
-        res.status(200).json(
+        return res.status(200).json(
 
             appointments
 
@@ -287,14 +862,18 @@ const getDoctorAppointments = async (req, res) => {
 
     }
 
+
     catch (err) {
 
         console.error(
+
             "Get Doctor Appointments Error:",
+
             err
+
         );
 
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to fetch appointments",
@@ -313,9 +892,7 @@ const getDoctorAppointments = async (req, res) => {
 // LAB APPOINTMENTS
 // ======================================================
 //
-// IMPORTANT:
-//
-// Appointment.labId references:
+// Appointment.labId stores:
 //
 // Lab._id
 //
@@ -323,8 +900,6 @@ const getDoctorAppointments = async (req, res) => {
 //
 // Lab.labId
 //
-// Therefore we first find the actual Lab document
-// belonging to the logged-in laboratory.
 // ======================================================
 
 const getLabAppointments = async (req, res) => {
@@ -351,8 +926,11 @@ const getLabAppointments = async (req, res) => {
 
 
         console.log(
+
             "Logged-in Lab User:",
+
             req.user
+
         );
 
 
@@ -364,8 +942,8 @@ const getLabAppointments = async (req, res) => {
 
 
         // --------------------------------------------------
-        // OPTION 1:
-        // req.user.id is Lab MongoDB _id
+        // OPTION 1
+        // JWT contains MongoDB _id
         // --------------------------------------------------
 
         if (
@@ -383,12 +961,8 @@ const getLabAppointments = async (req, res) => {
 
 
         // --------------------------------------------------
-        // OPTION 2:
-        // req.user.id is custom labId
-        //
-        // Example:
-        //
-        // req.user.id = "LAB001"
+        // OPTION 2
+        // JWT contains custom labId
         // --------------------------------------------------
 
         if (!lab) {
@@ -397,7 +971,9 @@ const getLabAppointments = async (req, res) => {
                 await Lab.findOne({
 
                     labId:
-                        String(req.user.id)
+                        String(
+                            req.user.id
+                        )
 
                 });
 
@@ -411,8 +987,11 @@ const getLabAppointments = async (req, res) => {
         if (!lab) {
 
             console.error(
-                "Lab not found for logged-in user:",
+
+                "Lab not found:",
+
                 req.user.id
+
             );
 
             return res.status(404).json({
@@ -426,17 +1005,27 @@ const getLabAppointments = async (req, res) => {
 
 
         console.log(
+
             "Resolved Lab:",
+
             {
-                mongoId: lab._id,
-                labId: lab.labId,
-                labName: lab.labName
+
+                mongoId:
+                    lab._id,
+
+                labId:
+                    lab.labId,
+
+                labName:
+                    lab.labName
+
             }
+
         );
 
 
         // ==================================================
-        // FIND APPOINTMENTS
+        // FIND LAB APPOINTMENTS
         // ==================================================
 
         const appointments =
@@ -496,8 +1085,11 @@ const getLabAppointments = async (req, res) => {
 
 
         console.log(
+
             "Lab Appointments Found:",
+
             appointments.length
+
         );
 
 
@@ -505,13 +1097,14 @@ const getLabAppointments = async (req, res) => {
         // RESPONSE
         // ==================================================
 
-        res.status(200).json(
+        return res.status(200).json(
 
             appointments
 
         );
 
     }
+
 
     catch (err) {
 
@@ -523,7 +1116,7 @@ const getLabAppointments = async (req, res) => {
 
         );
 
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to fetch lab appointments",
@@ -539,7 +1132,7 @@ const getLabAppointments = async (req, res) => {
 
 
 // ======================================================
-// Update Appointment Status
+// UPDATE APPOINTMENT STATUS
 // ======================================================
 
 const updateAppointmentStatus = async (req, res) => {
@@ -566,7 +1159,9 @@ const updateAppointmentStatus = async (req, res) => {
 
 
         if (
-            !allowedStatuses.includes(status)
+            !allowedStatuses.includes(
+                status
+            )
         ) {
 
             return res.status(400).json({
@@ -635,24 +1230,34 @@ const updateAppointmentStatus = async (req, res) => {
 
 
         // ==================================================
-        // POPULATE UPDATED APPOINTMENT
+        // POPULATE PATIENT
         // ==================================================
 
         await appointment.populate(
 
             "patientId",
 
-            "name email phone age bloodGroup"
+            "name email phone age gender bloodGroup height weight address allergies disease diseases medications emergencyContact city status"
 
         );
+
+
+        // ==================================================
+        // POPULATE DOCTOR
+        // ==================================================
 
         await appointment.populate(
 
             "doctorId",
 
-            "name email phone specialization"
+            "name email phone specialization doctorId"
 
         );
+
+
+        // ==================================================
+        // POPULATE LAB
+        // ==================================================
 
         await appointment.populate(
 
@@ -667,7 +1272,7 @@ const updateAppointmentStatus = async (req, res) => {
         // RESPONSE
         // ==================================================
 
-        res.status(200).json({
+        return res.status(200).json({
 
             message:
                 "Appointment status updated successfully",
@@ -679,6 +1284,7 @@ const updateAppointmentStatus = async (req, res) => {
 
     }
 
+
     catch (err) {
 
         console.error(
@@ -689,7 +1295,7 @@ const updateAppointmentStatus = async (req, res) => {
 
         );
 
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to update appointment",

@@ -1,47 +1,93 @@
-const express =
-require(
-"express"
-)
+const express = require("express");
 
-const router =
-express.Router()
+const router = express.Router();
 
-const Coupon =
-require(
-"../models/Coupon"
-)
+const {
+    getCoupons,
+    getActiveCoupons,
+    validateCoupon,
+    createCoupon,
+    getCouponById,
+    updateCoupon,
+    deleteCoupon
+} = require("../controllers/couponController");
+
+
+// ======================================================
+// GET ALL COUPONS
+// GET /api/coupons
+// ======================================================
 
 router.get(
-"/",
-async(
-req,
-res
-)=>{
+    "/",
+    getCoupons
+);
 
-try{
 
-const data =
-await Coupon.find()
+// ======================================================
+// GET ACTIVE COUPONS
+// GET /api/coupons/active
+// ======================================================
 
-res.json(
-data
-)
+router.get(
+    "/active",
+    getActiveCoupons
+);
 
-}
 
-catch(error){
+// ======================================================
+// VALIDATE COUPON
+// POST /api/coupons/validate
+// ======================================================
 
-res
-.status(500)
-.json({
-message:
-error.message
-})
+router.post(
+    "/validate",
+    validateCoupon
+);
 
-}
 
-}
-)
+// ======================================================
+// CREATE COUPON
+// POST /api/coupons
+// ======================================================
 
-module.exports =
-router
+router.post(
+    "/",
+    createCoupon
+);
+
+
+// ======================================================
+// GET COUPON BY ID
+// GET /api/coupons/:id
+// ======================================================
+
+router.get(
+    "/:id",
+    getCouponById
+);
+
+
+// ======================================================
+// UPDATE COUPON
+// PUT /api/coupons/:id
+// ======================================================
+
+router.put(
+    "/:id",
+    updateCoupon
+);
+
+
+// ======================================================
+// DELETE COUPON
+// DELETE /api/coupons/:id
+// ======================================================
+
+router.delete(
+    "/:id",
+    deleteCoupon
+);
+
+
+module.exports = router;

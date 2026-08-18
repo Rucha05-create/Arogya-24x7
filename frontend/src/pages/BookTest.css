@@ -1,17 +1,29 @@
 /* =========================================================
    BOOK TEST PAGE
+   AROGYA 24×7
    ========================================================= */
 
-.book-test-page {
-    min-height: 100vh;
-    padding: 40px 60px;
-    background: linear-gradient(
-        135deg,
-        #f4fbff 0%,
-        #eef8f5 50%,
-        #f8fcff 100%
-    );
-    box-sizing: border-box;
+.bookTestPage {
+  min-height: 100vh;
+  background: #f3f7fd;
+  padding: 110px 20px 50px;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
+.bookTestContainer {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 40px;
+  box-sizing: border-box;
+  box-shadow: 0 12px 35px rgba(30, 76, 120, 0.12);
 }
 
 
@@ -19,54 +31,23 @@
    PAGE HEADER
    ========================================================= */
 
-.book-test-header {
-    text-align: center;
-    margin-bottom: 35px;
+.bookTestHeader {
+  text-align: center;
+  margin-bottom: 35px;
 }
 
-.book-test-header h1 {
-    margin: 0;
-    font-size: 36px;
-    font-weight: 700;
-    color: #123c69;
+.bookTestHeader h1 {
+  margin: 0;
+  color: #123f70;
+  font-size: 32px;
+  font-weight: 700;
 }
 
-.book-test-header p {
-    margin-top: 10px;
-    color: #64748b;
-    font-size: 16px;
-}
-
-
-/* =========================================================
-   MAIN BOOKING CONTAINER
-   ========================================================= */
-
-.booking-container {
-    max-width: 1100px;
-    margin: auto;
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 35px;
-    box-shadow: 0 10px 35px rgba(15, 61, 92, 0.12);
-    border: 1px solid #e5eef5;
-}
-
-
-/* =========================================================
-   SECTION
-   ========================================================= */
-
-.booking-section {
-    margin-bottom: 30px;
-}
-
-.booking-section h2 {
-    margin-bottom: 18px;
-    font-size: 22px;
-    color: #123c69;
-    border-left: 5px solid #1e88a8;
-    padding-left: 12px;
+.bookTestHeader p {
+  margin: 10px 0 0;
+  color: #66788d;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 
@@ -74,335 +55,442 @@
    FORM GROUP
    ========================================================= */
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
+.formGroup {
+  margin-bottom: 25px;
 }
 
-.form-group label {
-    margin-bottom: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #334155;
+.formGroup label {
+  display: block;
+  margin-bottom: 9px;
+  color: #173f68;
+  font-size: 15px;
+  font-weight: 600;
 }
 
-.form-group input,
-.form-group select {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 13px 15px;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    font-size: 15px;
-    background: #ffffff;
-    color: #1e293b;
-    outline: none;
-    transition: 0.2s ease;
+.formGroup input,
+.formGroup select {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid #d4deea;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #172b3f;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: 0.2s ease;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-    border-color: #1e88a8;
-    box-shadow: 0 0 0 3px rgba(30, 136, 168, 0.12);
+.formGroup input:focus,
+.formGroup select:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12);
 }
 
-
-/* =========================================================
-   LAB SELECTION
-   ========================================================= */
-
-.lab-selection {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-}
-
-.lab-card {
-    border: 2px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 18px;
-    cursor: pointer;
-    background: #ffffff;
-    transition: all 0.25s ease;
-}
-
-.lab-card:hover {
-    border-color: #1e88a8;
-    transform: translateY(-2px);
-    box-shadow: 0 7px 18px rgba(30, 136, 168, 0.12);
-}
-
-.lab-card.selected {
-    border-color: #1e88a8;
-    background: #effaff;
-    box-shadow: 0 6px 18px rgba(30, 136, 168, 0.15);
-}
-
-.lab-card h3 {
-    margin: 0 0 8px;
-    color: #123c69;
-    font-size: 18px;
-}
-
-.lab-card p {
-    margin: 5px 0;
-    color: #64748b;
-    font-size: 14px;
+.formGroup input::placeholder {
+  color: #9aa8b7;
 }
 
 
 /* =========================================================
-   TEST SELECTION
+   LABORATORY SECTION
    ========================================================= */
 
-.test-selection {
-    margin-top: 10px;
+.labSection {
+  margin-bottom: 30px;
 }
 
-.test-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    margin-top: 15px;
+.labSection label {
+  display: block;
+  margin-bottom: 10px;
+  color: #173f68;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.labSection select {
+  width: 100%;
+  height: 50px;
+  padding: 0 15px;
+  border: 1px solid #d5dfeb;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #26384b;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+}
+
+.labSection select:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12);
 }
 
 
 /* =========================================================
-   TEST CARD
+   SELECT TESTS
    ========================================================= */
 
-.test-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    padding: 15px 18px;
-
-    border: 1px solid #dbe4ec;
-    border-radius: 12px;
-
-    background: #ffffff;
-
-    cursor: pointer;
-
-    transition: all 0.2s ease;
+.testsSection {
+  margin-top: 25px;
 }
 
-.test-card:hover {
-    border-color: #1e88a8;
-    background: #f5fcff;
+.testsSection h2 {
+  margin: 0;
+  color: #172f48;
+  font-size: 20px;
+  font-weight: 700;
 }
 
-.test-card.selected {
-    border-color: #1e88a8;
-    background: #effaff;
-}
-
-
-/* Checkbox */
-
-.test-card input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: #1e88a8;
-    cursor: pointer;
-}
-
-.test-card span {
-    font-size: 15px;
-    font-weight: 500;
-    color: #334155;
+.testsSection > p {
+  margin: 8px 0 20px;
+  color: #687b91;
+  font-size: 14px;
 }
 
 
 /* =========================================================
-   SELECTED TESTS
+   TEST ROW
    ========================================================= */
 
-.selected-tests {
-    margin-top: 20px;
-    padding: 18px;
-    background: #f8fafc;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
+.testRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 14px;
+  margin-bottom: 15px;
+  align-items: center;
 }
 
-.selected-tests h3 {
-    margin-top: 0;
-    margin-bottom: 12px;
-    color: #123c69;
-    font-size: 17px;
+.testRow select,
+.testRow input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid #d6e0eb;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #26384b;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
 }
 
-.selected-test-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    padding: 10px 12px;
-    margin-bottom: 8px;
-
-    background: #ffffff;
-    border-radius: 8px;
-
-    border: 1px solid #e5e7eb;
-}
-
-.selected-test-item span {
-    color: #334155;
-    font-size: 14px;
-}
-
-
-/* Remove test button */
-
-.remove-test-btn {
-    border: none;
-    background: transparent;
-    color: #dc2626;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 3px 7px;
-    border-radius: 5px;
-    transition: 0.2s ease;
-}
-
-.remove-test-btn:hover {
-    background: #fee2e2;
+.testRow select:focus,
+.testRow input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.10);
 }
 
 
 /* =========================================================
-   ADD CUSTOM TEST
+   PRICE FIELD
    ========================================================= */
 
-.custom-test-row {
-    display: flex;
-    gap: 12px;
-    margin-top: 18px;
-}
-
-.custom-test-row input {
-    flex: 1;
-    padding: 13px 15px;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    font-size: 15px;
-    outline: none;
-}
-
-.custom-test-row input:focus {
-    border-color: #1e88a8;
-    box-shadow: 0 0 0 3px rgba(30, 136, 168, 0.1);
+.testPrice {
+  background: #fafafa !important;
+  color: #68798c !important;
+  cursor: not-allowed;
 }
 
 
 /* =========================================================
-   BUTTONS
+   REMOVE TEST BUTTON
    ========================================================= */
 
-.add-test-btn {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 9px;
-
-    background: #1e88a8;
-    color: white;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition: 0.2s ease;
+.removeTestButton {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background: #ffe9e9;
+  color: #d93636;
+  font-size: 20px;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.add-test-btn:hover {
-    background: #176d88;
-    transform: translateY(-1px);
+.removeTestButton:hover {
+  background: #ffd5d5;
+  transform: scale(1.04);
 }
 
 
 /* =========================================================
-   DATE + TIME
+   ADD ANOTHER TEST
    ========================================================= */
 
-.datetime-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+.addTestButton {
+  width: 100%;
+  height: 48px;
+  margin: 8px 0 30px;
+  border: none;
+  border-radius: 9px;
+  background: #238daa;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.addTestButton:hover {
+  background: #197b96;
+  transform: translateY(-1px);
+}
+
+.addTestButton:active {
+  transform: translateY(0);
 }
 
 
 /* =========================================================
-   BOOK APPOINTMENT BUTTON
+   APPOINTMENT DATE + TIME
    ========================================================= */
 
-.book-button-container {
-    margin-top: 30px;
-    text-align: center;
+.appointmentSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-top: 10px;
+  margin-bottom: 25px;
 }
 
-.book-appointment-btn {
-    width: 100%;
-    max-width: 450px;
-
-    padding: 15px 25px;
-
-    border: none;
-    border-radius: 12px;
-
-    background: linear-gradient(
-        135deg,
-        #1e88a8,
-        #176d88
-    );
-
-    color: white;
-
-    font-size: 17px;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    box-shadow: 0 7px 18px rgba(30, 136, 168, 0.25);
-
-    transition: all 0.25s ease;
+.appointmentField {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.book-appointment-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(30, 136, 168, 0.3);
+.appointmentField label {
+  white-space: nowrap;
+  color: #172f48;
+  font-size: 15px;
+  font-weight: 500;
 }
 
-.book-appointment-btn:active {
-    transform: translateY(0);
+.appointmentField input {
+  width: 145px;
+  height: 48px;
+  padding: 0 12px;
+  border: 1px solid #d4deea;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #26384b;
+  outline: none;
+  box-sizing: border-box;
 }
 
-.book-appointment-btn:disabled {
-    background: #94a3b8;
-    cursor: not-allowed;
-    box-shadow: none;
+.appointmentField input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.10);
 }
 
 
 /* =========================================================
-   ERROR MESSAGE
+   COUPON SECTION
    ========================================================= */
 
-.booking-error {
-    margin: 15px 0;
-    padding: 12px 15px;
+.couponSection {
+  margin-top: 15px;
+  margin-bottom: 25px;
+}
 
-    background: #fef2f2;
-    border: 1px solid #fecaca;
+.couponContainer {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+}
 
-    color: #dc2626;
+.couponContainer input {
+  flex: 1;
+  height: 48px;
+  padding: 0 15px;
+  border: 1px solid #d4deea;
+  border-radius: 9px;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+}
 
-    border-radius: 8px;
+.couponContainer input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.10);
+}
 
-    font-size: 14px;
+.couponContainer button {
+  min-width: 90px;
+  height: 48px;
+  border: none;
+  border-radius: 8px;
+  background: #eeeeee;
+  color: #172f48;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.couponContainer button:hover {
+  background: #dedede;
+}
+
+
+/* =========================================================
+   COUPON SUCCESS MESSAGE
+   ========================================================= */
+
+.couponSuccess {
+  margin-top: 10px;
+  padding: 10px 13px;
+  border-radius: 8px;
+  background: #eaf8ef;
+  color: #23743d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   COUPON ERROR MESSAGE
+   ========================================================= */
+
+.couponError {
+  margin-top: 10px;
+  padding: 10px 13px;
+  border-radius: 8px;
+  background: #fff0f0;
+  color: #c62828;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   COUPON OPTIONS
+   ========================================================= */
+
+.couponOptions {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #f6f9fd;
+  border: 1px solid #e0e8f1;
+}
+
+.couponOptionsTitle {
+  margin-bottom: 10px;
+  color: #173f68;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.couponOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e3e9f0;
+}
+
+.couponOption:last-child {
+  border-bottom: none;
+}
+
+.couponCode {
+  color: #1a5c91;
+  font-weight: 700;
+}
+
+.couponDiscount {
+  color: #288044;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   TOTAL SUMMARY
+   ========================================================= */
+
+.totalSection {
+  margin-top: 20px;
+  padding: 24px;
+  border-radius: 15px;
+  background: #f4f8fe;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  color: #172f48;
+  font-size: 16px;
+}
+
+.totalRow:last-child {
+  margin-bottom: 0;
+}
+
+.discountRow {
+  color: #278044;
+}
+
+.finalRow {
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #dbe4ef;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   CONFIRM APPOINTMENT BUTTON
+   ========================================================= */
+
+.confirmButton {
+  width: 100%;
+  height: 52px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 9px;
+  background: #176ac2;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.confirmButton:hover {
+  background: #125ba8;
+  transform: translateY(-1px);
+}
+
+.confirmButton:active {
+  transform: translateY(0);
+}
+
+.confirmButton:disabled {
+  background: #a9bfd6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* =========================================================
+   GENERAL ERROR
+   ========================================================= */
+
+.errorMessage {
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  border: 1px solid #f2baba;
+  border-radius: 9px;
+  background: #fff0f0;
+  color: #c62828;
+  font-size: 14px;
 }
 
 
@@ -410,38 +498,15 @@
    SUCCESS MESSAGE
    ========================================================= */
 
-.booking-success {
-    margin: 15px 0;
-    padding: 12px 15px;
-
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-
-    color: #15803d;
-
-    border-radius: 8px;
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   EMPTY STATE
-   ========================================================= */
-
-.empty-tests {
-    padding: 18px;
-    text-align: center;
-
-    color: #64748b;
-
-    background: #f8fafc;
-
-    border: 1px dashed #cbd5e1;
-
-    border-radius: 10px;
-
-    margin-top: 15px;
+.successMessage {
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  border: 1px solid #b8dfc4;
+  border-radius: 9px;
+  background: #edf9f0;
+  color: #23743d;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 
@@ -449,81 +514,144 @@
    LOADING
    ========================================================= */
 
-.loading-text {
-    text-align: center;
-    padding: 25px;
-    color: #64748b;
-    font-size: 15px;
+.loadingText {
+  padding: 20px;
+  text-align: center;
+  color: #64788f;
+  font-size: 14px;
 }
 
 
 /* =========================================================
-   RESPONSIVE - TABLET
+   NO TESTS
    ========================================================= */
 
-@media (max-width: 900px) {
+.noTestsMessage {
+  padding: 18px;
+  border: 1px dashed #cbd8e6;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #718298;
+  text-align: center;
+  font-size: 14px;
+}
 
-    .book-test-page {
-        padding: 30px;
-    }
 
-    .booking-container {
-        padding: 28px;
-    }
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
 
-    .lab-selection {
-        grid-template-columns: 1fr;
-    }
+@media (max-width: 768px) {
 
-    .test-list {
-        grid-template-columns: 1fr;
-    }
+  .bookTestPage {
+    padding: 95px 15px 35px;
+  }
+
+  .bookTestContainer {
+    padding: 28px 22px;
+    border-radius: 17px;
+  }
+
+  .bookTestHeader h1 {
+    font-size: 27px;
+  }
+
+  .testRow {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .appointmentSection {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .appointmentField {
+    justify-content: space-between;
+  }
+
+  .appointmentField input {
+    flex: 1;
+  }
 
 }
 
 
 /* =========================================================
-   RESPONSIVE - MOBILE
+   RESPONSIVE — MOBILE
    ========================================================= */
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
 
-    .book-test-page {
-        padding: 20px 12px;
-    }
+  .bookTestPage {
+    padding: 85px 10px 25px;
+  }
 
-    .booking-container {
-        padding: 20px 16px;
-        border-radius: 15px;
-    }
+  .bookTestContainer {
+    padding: 22px 16px;
+    border-radius: 14px;
+  }
 
-    .book-test-header h1 {
-        font-size: 28px;
-    }
+  .bookTestHeader {
+    margin-bottom: 25px;
+  }
 
-    .book-test-header p {
-        font-size: 14px;
-    }
+  .bookTestHeader h1 {
+    font-size: 24px;
+  }
 
-    .booking-section h2 {
-        font-size: 19px;
-    }
+  .bookTestHeader p {
+    font-size: 13px;
+  }
 
-    .datetime-container {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
+  .formGroup {
+    margin-bottom: 20px;
+  }
 
-    .custom-test-row {
-        flex-direction: column;
-    }
+  .testRow {
+    display: block;
+  }
 
-    .add-test-btn {
-        width: 100%;
-    }
+  .testRow select,
+  .testRow input {
+    margin-bottom: 10px;
+  }
 
-    .book-appointment-btn {
-        max-width: 100%;
-    }
+  .appointmentField {
+    display: block;
+  }
+
+  .appointmentField label {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .appointmentField input {
+    width: 100%;
+  }
+
+  .couponContainer {
+    flex-direction: column;
+  }
+
+  .couponContainer button {
+    width: 100%;
+  }
+
+  .totalSection {
+    padding: 18px;
+  }
+
+  .totalRow {
+    font-size: 14px;
+  }
+
+  .finalRow {
+    font-size: 20px;
+  }
+
+  .confirmButton {
+    height: 50px;
+  }
 
 }
