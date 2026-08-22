@@ -2,15 +2,22 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
     {
+        // =====================================================
+        // BASIC USER INFORMATION
+        // =====================================================
+
         name: {
             type: String,
-            required: true
+            required: true,
+            trim: true
         },
 
         email: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            lowercase: true,
+            trim: true
         },
 
         password: {
@@ -20,7 +27,8 @@ const userSchema = new mongoose.Schema(
 
         phone: {
             type: String,
-            default: ""
+            default: "",
+            trim: true
         },
 
         age: {
@@ -32,6 +40,11 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: ""
         },
+
+
+        // =====================================================
+        // HEALTH INFORMATION
+        // =====================================================
 
         bloodGroup: {
             type: String,
@@ -68,6 +81,11 @@ const userSchema = new mongoose.Schema(
             default: ""
         },
 
+
+        // =====================================================
+        // ADDRESS INFORMATION
+        // =====================================================
+
         address: {
             type: String,
             default: ""
@@ -78,10 +96,43 @@ const userSchema = new mongoose.Schema(
             default: ""
         },
 
+
+        // =====================================================
+        // ACCOUNT STATUS
+        // =====================================================
+
         status: {
             type: String,
+            enum: [
+                "Active",
+                "Inactive",
+                "Blocked"
+            ],
             default: "Active"
         },
+
+
+        // =====================================================
+        // USER ROLE / ACCOUNT TYPE
+        // =====================================================
+        //
+        // These roles must match the roles used by your
+        // registration/login system and coupon collection.
+        //
+        // Supported account types:
+        //
+        // client
+        // health_worker
+        // intern
+        // volunteer
+        // social_worker
+        // employee
+        // sahash_employee
+        // doctor
+        // lab
+        // admin
+        //
+        // =====================================================
 
         role: {
             type: String,
@@ -91,9 +142,13 @@ const userSchema = new mongoose.Schema(
                 "admin",
                 "doctor",
                 "lab",
+
                 "health_worker",
                 "intern",
                 "volunteer",
+
+                "social_worker",
+                "employee",
                 "sahash_employee"
             ],
 
@@ -106,4 +161,13 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("User", userSchema);
+
+// =====================================================
+// EXPORT MODEL
+// =====================================================
+
+module.exports = mongoose.model(
+    "User",
+    userSchema
+);
+

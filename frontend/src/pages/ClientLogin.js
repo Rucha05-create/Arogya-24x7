@@ -30,30 +30,33 @@ function ClientLogin() {
 
 
     // =====================================================
-    // LOGIN
+    // HANDLE LOGIN
     // =====================================================
 
     const handleSubmit = async (e) => {
 
         e.preventDefault();
 
-        // Prevent multiple clicks
         if (loading) {
             return;
         }
 
+
         // =================================================
-        // Basic Validation
+        // VALIDATION
         // =================================================
 
-        if (!formData.email.trim()) {
+        const email = formData.email.trim();
+        const password = formData.password;
+
+        if (!email) {
 
             alert("Please enter your email.");
 
             return;
         }
 
-        if (!formData.password) {
+        if (!password) {
 
             alert("Please enter your password.");
 
@@ -67,18 +70,17 @@ function ClientLogin() {
 
 
             // =================================================
-            // SEND LOGIN REQUEST
+            // LOGIN REQUEST
             // =================================================
 
-            console.log(
-                "Sending Client Login Request..."
-            );
+            console.log("Sending Login Request...");
+
 
             const res = await axios.post(
                 "http://localhost:5000/api/client/login",
                 {
-                    email: formData.email.trim(),
-                    password: formData.password
+                    email,
+                    password
                 },
                 {
                     headers: {
@@ -90,7 +92,7 @@ function ClientLogin() {
 
 
             console.log(
-                "Client Login Response:",
+                "Login Response:",
                 res.data
             );
 
@@ -105,12 +107,12 @@ function ClientLogin() {
             if (!token) {
 
                 console.error(
-                    "Login response does not contain a token:",
+                    "Token missing from login response:",
                     res.data
                 );
 
                 throw new Error(
-                    "Login successful response did not contain an authentication token."
+                    "Login successful, but authentication token was not returned."
                 );
 
             }
@@ -120,21 +122,6 @@ function ClientLogin() {
             // GET USER
             // =================================================
 
-            /*
-                Normally backend should return:
-
-                {
-                    token: "...",
-                    user: {
-                        name: "...",
-                        email: "...",
-                        role: "client"
-                    }
-                }
-
-                We also handle client/user response variations.
-            */
-
             const userFromResponse =
                 res.data?.user ||
                 res.data?.client;
@@ -143,12 +130,65 @@ function ClientLogin() {
             if (!userFromResponse) {
 
                 console.error(
-                    "Login response does not contain user information:",
+                    "User information missing from login response:",
                     res.data
                 );
 
                 throw new Error(
-                    "Login successful, but client information was not returned by the server."
+                    "Login successful, but user information was not returned."
+                );
+
+            }
+
+
+            // =================================================
+            // GET ACTUAL ROLE
+            // =================================================
+            //
+            // IMPORTANT:
+            // Do NOT hardcode:
+            //
+            // localStorage.setItem("role", "client");
+            //
+            // The role must come from the backend.
+            //
+
+            const userRole =
+                String(
+                    userFromResponse.role ||
+                    res.data?.role ||
+                    "client"
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            // =================================================
+            // SUPPORTED ROLES
+            // =================================================
+
+            const supportedRoles = [
+                "client",
+                "volunteer",
+                "social_worker",
+                "health_worker",
+                "intern",
+                "sahash_employee",
+                "employee",
+                "vendor",
+                "admin"
+            ];
+
+
+            if (!supportedRoles.includes(userRole)) {
+
+                console.error(
+                    "Unsupported user role:",
+                    userRole
+                );
+
+                throw new Error(
+                    `Unsupported user role received from server: ${userRole}`
                 );
 
             }
@@ -162,17 +202,26 @@ function ClientLogin() {
 
                 ...userFromResponse,
 
-                role:
-                    userFromResponse.role ||
-                    "client",
+                role: userRole,
+
+                name:
+                    userFromResponse.name ||
+                    "",
+
+                email:
+                    userFromResponse.email ||
+                    email,
 
                 phone:
                     userFromResponse.phone ||
                     "",
 
-                emergencyContact:
-                    userFromResponse.emergencyContact ||
-                    userFromResponse.emergency ||
+                age:
+                    userFromResponse.age ||
+                    "",
+
+                gender:
+                    userFromResponse.gender ||
                     "",
 
                 bloodGroup:
@@ -195,13 +244,18 @@ function ClientLogin() {
                     userFromResponse.allergies ||
                     "",
 
-                disease:
-                    userFromResponse.disease ||
+                diseases:
                     userFromResponse.diseases ||
+                    userFromResponse.disease ||
                     "",
 
                 medications:
                     userFromResponse.medications ||
+                    "",
+
+                emergencyContact:
+                    userFromResponse.emergencyContact ||
+                    userFromResponse.emergency ||
                     ""
 
             };
@@ -217,7 +271,7 @@ function ClientLogin() {
 
 
             // =================================================
-            // SAVE NEW TOKEN
+            // SAVE TOKEN
             // =================================================
 
             localStorage.setItem(
@@ -227,12 +281,12 @@ function ClientLogin() {
 
 
             // =================================================
-            // SAVE ROLE
+            // SAVE ACTUAL ROLE
             // =================================================
 
             localStorage.setItem(
                 "role",
-                "client"
+                userRole
             );
 
 
@@ -247,12 +301,17 @@ function ClientLogin() {
 
 
             // =================================================
-            // VERIFY LOCAL STORAGE
+            // DEBUG INFORMATION
             // =================================================
 
             console.log(
-                "Logged-in Client:",
+                "Logged-in User:",
                 user
+            );
+
+            console.log(
+                "User Role:",
+                userRole
             );
 
             console.log(
@@ -269,42 +328,160 @@ function ClientLogin() {
 
 
             // =================================================
-            // SUCCESS
+            // SUCCESS MESSAGE
             // =================================================
 
             alert(
-                "Client Login Successful!"
+                `${userRole.replace(/_/g, " ")} login successful!`
             );
 
 
             // =================================================
-            // REDIRECT
+            // ROLE-BASED REDIRECT
             // =================================================
 
-            navigate(
-                "/client/home",
-                {
-                    replace: true
-                }
-            );
+            switch (userRole) {
+
+                case "admin":
+
+                    navigate(
+                        "/admin/dashboard",
+                        {
+                            replace: true
+                        }
+                    );
+
+                    break;
+
+
+                case "doctor":
+
+                    navigate(
+                        "/doctor/dashboard",
+                        {
+                            replace: true
+                        }
+                    );
+
+                    break;
+
+
+                case "volunteer":
+
+                    navigate(
+                        "/volunteer/dashboard",
+                        {
+                            replace: true
+                        }
+                    );
+
+                    break;
+
+
+                case "social_worker":
+
+                    navigate(
+                        "/social-worker/dashboard",
+                        {
+                            replace: true
+                        }
+                    );
+
+                    break;
+
+
+                case "health_worker":
+
+                    navigate(
+                        "/health-worker/dashboard",
+                        {
+                            replace: true
+                        }
+                    );
+
+                    break;
+
+
+                case "intern":
+
+                    navigate(
+                        "/intern/dashboard",
+                        {
+                            replace: true
+                        }
+                    );
+
+                    break;
+
+
+                case "sahash_employee":
+
+                    navigate(
+                        "/sahash/dashboard",
+                        {
+                            replace: true
+                        }
+                    );
+
+                    break;
+
+
+                case "employee":
+
+                    navigate(
+                        "/employee/dashboard",
+                        {
+                            replace: true
+                        }
+                    );
+
+                    break;
+
+
+                case "vendor":
+
+                    navigate(
+                        "/vendor/dashboard",
+                        {
+                            replace: true
+                        }
+                    );
+
+                    break;
+
+
+                case "client":
+
+                default:
+
+                    navigate(
+                        "/client/dashboard",
+                        {
+                            replace: true
+                        }
+                    );
+
+                    break;
+
+            }
 
         }
 
 
         // =====================================================
-        // ERROR
+        // ERROR HANDLING
         // =====================================================
 
         catch (err) {
 
             console.error(
-                "Client Login Error:",
+                "Login Error:",
                 err
             );
 
 
             // =================================================
-            // BACKEND ERROR
+            // BACKEND RESPONSE ERROR
             // =================================================
 
             if (err.response) {
@@ -344,11 +521,21 @@ function ClientLogin() {
                 }
 
                 else if (
+                    err.response.status === 403
+                ) {
+
+                    alert(
+                        "You are not authorized to login with this account."
+                    );
+
+                }
+
+                else if (
                     err.response.status === 404
                 ) {
 
                     alert(
-                        "Client login service was not found. Please check the backend route."
+                        "Login service was not found. Please check the backend route."
                     );
 
                 }
@@ -375,7 +562,7 @@ function ClientLogin() {
 
 
             // =================================================
-            // SERVER NOT REACHABLE
+            // NO SERVER RESPONSE
             // =================================================
 
             else if (err.request) {
@@ -400,14 +587,14 @@ function ClientLogin() {
 
                 alert(
                     err.message ||
-                    "Login Failed."
+                    "Login failed."
                 );
 
             }
 
 
             // =================================================
-            // REMOVE INVALID AUTH DATA
+            // REMOVE INVALID LOGIN DATA
             // =================================================
 
             localStorage.removeItem("token");
@@ -522,3 +709,4 @@ function ClientLogin() {
 }
 
 export default ClientLogin;
+

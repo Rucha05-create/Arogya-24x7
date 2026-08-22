@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Coupon = require("../models/Coupon");
 
+
 // ======================================================
 // HELPER: NORMALIZE ROLE
 // ======================================================
@@ -11,10 +12,61 @@ const normalizeRole = (role) => {
         return "";
     }
 
-    return String(role)
+    const value = String(role)
         .trim()
         .toLowerCase()
         .replace(/[\s-]+/g, "_");
+
+    // --------------------------------------------------
+    // ROLE ALIASES
+    // --------------------------------------------------
+
+    if (
+        value === "healthworker" ||
+        value === "health_worker"
+    ) {
+        return "health_worker";
+    }
+
+    if (
+        value === "sahashemployee" ||
+        value === "sahash_employee" ||
+        value === "sahash_employee"
+    ) {
+        return "sahash_employee";
+    }
+
+    if (
+        value === "socialworker" ||
+        value === "social_worker"
+    ) {
+        return "social_worker";
+    }
+
+    if (
+        value === "employee" ||
+        value === "staff"
+    ) {
+        return "employee";
+    }
+
+    if (value === "volunteer") {
+        return "volunteer";
+    }
+
+    if (value === "intern") {
+        return "intern";
+    }
+
+    if (
+        value === "client" ||
+        value === "user" ||
+        value === "patient"
+    ) {
+        return "client";
+    }
+
+    return value;
 };
 
 
@@ -51,6 +103,70 @@ const normalizeId = (id) => {
 
 
 // ======================================================
+// ALL SUPPORTED USER ROLES
+// ======================================================
+
+const allowedRoles = [
+    "client",
+    "admin",
+    "doctor",
+    "lab",
+    "health_worker",
+    "intern",
+    "volunteer",
+    "sahash_employee",
+    "employee",
+    "social_worker"
+];
+
+
+// ======================================================
+// ROLES THAT REQUIRE SPECIAL ID
+// ======================================================
+//
+// Only these roles must enter an ID to use their coupon.
+//
+// Client      -> No ID
+// Intern      -> No ID
+// Health Worker -> No ID
+// Sahash Employee -> No ID
+//
+// Volunteer   -> ID REQUIRED
+// Employee    -> ID REQUIRED
+// Social Worker -> ID REQUIRED
+//
+
+const rolesRequiringId = [
+    "volunteer",
+    "employee",
+    "social_worker"
+];
+
+
+// ======================================================
+// GET DEFAULT ID TYPE
+// ======================================================
+
+const getDefaultIdType = (role) => {
+
+    switch (role) {
+
+        case "volunteer":
+            return "volunteer_id";
+
+        case "employee":
+            return "employee_id";
+
+        case "social_worker":
+            return "social_worker_id";
+
+        default:
+            return null;
+    }
+};
+
+
+// ======================================================
 // CREATE COUPON
 // ======================================================
 //
@@ -59,8 +175,8 @@ const normalizeId = (id) => {
 // Example:
 //
 // {
-//     "code": "VOL20",
-//     "discount": 20,
+//     "code": "VOL15",
+//     "discount": 15,
 //     "allowedRole": "volunteer",
 //     "requiresId": true,
 //     "idType": "volunteer_id",
@@ -90,14 +206,13 @@ const createCoupon = async (req, res) => {
         // VALIDATE CODE
         // ==================================================
 
-        const normalizedCode = normalizeCode(code);
+        const normalizedCode =
+            normalizeCode(code);
 
         if (!normalizedCode) {
 
             return res.status(400).json({
-
                 message: "Coupon code is required"
-
             });
 
         }
@@ -107,7 +222,8 @@ const createCoupon = async (req, res) => {
         // VALIDATE DISCOUNT
         // ==================================================
 
-        const discountValue = Number(discount);
+        const discountValue =
+            Number(discount);
 
         if (
             Number.isNaN(discountValue) ||
@@ -116,10 +232,8 @@ const createCoupon = async (req, res) => {
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Discount must be between 0 and 100"
-
             });
 
         }
@@ -132,20 +246,15 @@ const createCoupon = async (req, res) => {
         const normalizedRole =
             normalizeRole(allowedRole);
 
-        const allowedRoles = [
-            "client",
-            "volunteer",
-            "employee",
-            "social_worker"
-        ];
-
-        if (!allowedRoles.includes(normalizedRole)) {
+        if (
+            !allowedRoles.includes(
+                normalizedRole
+            )
+        ) {
 
             return res.status(400).json({
-
                 message:
                     "Invalid coupon role"
-
             });
 
         }
@@ -157,18 +266,14 @@ const createCoupon = async (req, res) => {
 
         const existingCoupon =
             await Coupon.findOne({
-
                 code: normalizedCode
-
             });
 
         if (existingCoupon) {
 
             return res.status(409).json({
-
                 message:
                     "Coupon code already exists"
-
             });
 
         }
@@ -178,16 +283,38 @@ const createCoupon = async (req, res) => {
         // DETERMINE ID REQUIREMENT
         // ==================================================
 
+        const idRequired =
+            rolesRequiringId.includes(
+                normalizedRole
+            );
+
+
         let finalRequiresId =
-            Boolean(requiresId);
+            idRequired;
+
 
         let finalIdType =
-            idType || null;
+            idRequired
+                ? (
+                    idType ||
+                    getDefaultIdType(
+                        normalizedRole
+                    )
+                )
+                : null;
 
 
-        // Client does not need ID
+        // ==================================================
+        // CLIENT / INTERN / HEALTH WORKER /
+        // SAHASH EMPLOYEE DO NOT REQUIRE ID
+        // ==================================================
 
-        if (normalizedRole === "client") {
+        if (
+            normalizedRole === "client" ||
+            normalizedRole === "intern" ||
+            normalizedRole === "health_worker" ||
+            normalizedRole === "sahash_employee"
+        ) {
 
             finalRequiresId = false;
             finalIdType = null;
@@ -195,56 +322,8 @@ const createCoupon = async (req, res) => {
         }
 
 
-        // Other roles require ID
-
-        if (
-            normalizedRole === "volunteer" ||
-            normalizedRole === "employee" ||
-            normalizedRole === "social_worker"
-        ) {
-
-            finalRequiresId = true;
-
-
-            if (!finalIdType) {
-
-                if (
-                    normalizedRole ===
-                    "volunteer"
-                ) {
-
-                    finalIdType =
-                        "volunteer_id";
-
-                }
-
-                else if (
-                    normalizedRole ===
-                    "employee"
-                ) {
-
-                    finalIdType =
-                        "employee_id";
-
-                }
-
-                else if (
-                    normalizedRole ===
-                    "social_worker"
-                ) {
-
-                    finalIdType =
-                        "social_worker_id";
-
-                }
-
-            }
-
-        }
-
-
         // ==================================================
-        // VALIDATE ID TYPE
+        // VALID ID TYPES
         // ==================================================
 
         const allowedIdTypes = [
@@ -253,16 +332,17 @@ const createCoupon = async (req, res) => {
             "social_worker_id"
         ];
 
+
         if (
             finalRequiresId &&
-            !allowedIdTypes.includes(finalIdType)
+            !allowedIdTypes.includes(
+                finalIdType
+            )
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Valid ID type is required"
-
             });
 
         }
@@ -291,7 +371,11 @@ const createCoupon = async (req, res) => {
                     finalIdType,
 
                 eligibleId:
-                    normalizeId(eligibleId),
+                    finalRequiresId
+                        ? normalizeId(
+                            eligibleId
+                        )
+                        : "",
 
                 isActive:
                     isActive !== undefined
@@ -308,7 +392,7 @@ const createCoupon = async (req, res) => {
         // RESPONSE
         // ==================================================
 
-        res.status(201).json({
+        return res.status(201).json({
 
             message:
                 "Coupon created successfully",
@@ -326,8 +410,7 @@ const createCoupon = async (req, res) => {
             error
         );
 
-
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to create coupon",
@@ -361,10 +444,8 @@ const getCoupons = async (req, res) => {
                 });
 
 
-        res.status(200).json(
-
+        return res.status(200).json(
             coupons
-
         );
 
     }
@@ -376,8 +457,7 @@ const getCoupons = async (req, res) => {
             error
         );
 
-
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to fetch coupons",
@@ -398,7 +478,7 @@ const getCoupons = async (req, res) => {
 //
 // GET /api/coupons/active
 //
-// Used by BookTest.js to show available coupons.
+// Used by BookTest.js.
 //
 // ======================================================
 
@@ -434,10 +514,8 @@ const getActiveCoupons = async (req, res) => {
             });
 
 
-        res.status(200).json(
-
+        return res.status(200).json(
             coupons
-
         );
 
     }
@@ -449,8 +527,7 @@ const getActiveCoupons = async (req, res) => {
             error
         );
 
-
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to fetch active coupons",
@@ -474,7 +551,7 @@ const getActiveCoupons = async (req, res) => {
 // Example:
 //
 // {
-//     "code": "VOL20",
+//     "code": "VOL15",
 //     "role": "volunteer",
 //     "id": "VOL123",
 //     "amount": 2500
@@ -521,10 +598,7 @@ const validateCoupon = async (req, res) => {
 
         const coupon =
             await Coupon.findOne({
-
-                code:
-                    normalizedCode
-
+                code: normalizedCode
             });
 
 
@@ -566,7 +640,9 @@ const validateCoupon = async (req, res) => {
 
         if (
             coupon.expiryDate &&
-            new Date(coupon.expiryDate) < new Date()
+            new Date(
+                coupon.expiryDate
+            ) < new Date()
         ) {
 
             return res.status(400).json({
@@ -594,7 +670,10 @@ const validateCoupon = async (req, res) => {
         // ==================================================
 
         if (
-            userRole !== coupon.allowedRole
+            userRole !==
+            normalizeRole(
+                coupon.allowedRole
+            )
         ) {
 
             return res.status(403).json({
@@ -602,8 +681,10 @@ const validateCoupon = async (req, res) => {
                 valid: false,
 
                 message:
-                    `This coupon is only available for ${coupon.allowedRole.replace(
-                        "_",
+                    `This coupon is only available for ${String(
+                        coupon.allowedRole
+                    ).replace(
+                        /_/g,
                         " "
                     )} users`
 
@@ -622,6 +703,10 @@ const validateCoupon = async (req, res) => {
                 normalizeId(id);
 
 
+            // ------------------------------------------------
+            // ID NOT PROVIDED
+            // ------------------------------------------------
+
             if (!userId) {
 
                 return res.status(400).json({
@@ -637,8 +722,10 @@ const validateCoupon = async (req, res) => {
                         `Please enter your ${
                             coupon.idType
                                 ? coupon.idType
-                                    .replace("_", " ")
-                                    .replace("_", " ")
+                                    .replace(
+                                        /_/g,
+                                        " "
+                                    )
                                 : "ID"
                         }`
 
@@ -647,9 +734,9 @@ const validateCoupon = async (req, res) => {
             }
 
 
-            // ==================================================
-            // CHECK SPECIFIC ELIGIBLE ID
-            // ==================================================
+            // ------------------------------------------------
+            // SPECIFIC ELIGIBLE ID
+            // ------------------------------------------------
 
             if (
                 coupon.eligibleId &&
@@ -673,7 +760,7 @@ const validateCoupon = async (req, res) => {
 
 
         // ==================================================
-        // CALCULATE DISCOUNT
+        // VALIDATE AMOUNT
         // ==================================================
 
         const numericAmount =
@@ -681,7 +768,9 @@ const validateCoupon = async (req, res) => {
 
 
         if (
-            Number.isNaN(numericAmount) ||
+            Number.isNaN(
+                numericAmount
+            ) ||
             numericAmount < 0
         ) {
 
@@ -697,15 +786,23 @@ const validateCoupon = async (req, res) => {
         }
 
 
+        // ==================================================
+        // CALCULATE DISCOUNT
+        // ==================================================
+
         const discountAmount =
             Number(
                 (
                     numericAmount *
-                    coupon.discount /
+                    Number(coupon.discount || 0) /
                     100
                 ).toFixed(2)
             );
 
+
+        // ==================================================
+        // FINAL AMOUNT
+        // ==================================================
 
         const finalAmount =
             Number(
@@ -720,7 +817,7 @@ const validateCoupon = async (req, res) => {
         // SUCCESS
         // ==================================================
 
-        res.status(200).json({
+        return res.status(200).json({
 
             valid: true,
 
@@ -764,8 +861,7 @@ const validateCoupon = async (req, res) => {
             error
         );
 
-
-        res.status(500).json({
+        return res.status(500).json({
 
             valid: false,
 
@@ -829,10 +925,8 @@ const getCouponById = async (req, res) => {
         }
 
 
-        res.status(200).json(
-
+        return res.status(200).json(
             coupon
-
         );
 
     }
@@ -844,8 +938,7 @@ const getCouponById = async (req, res) => {
             error
         );
 
-
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to fetch coupon",
@@ -991,7 +1084,9 @@ const updateCoupon = async (req, res) => {
 
 
             if (
-                Number.isNaN(discountValue) ||
+                Number.isNaN(
+                    discountValue
+                ) ||
                 discountValue < 0 ||
                 discountValue > 100
             ) {
@@ -1016,20 +1111,14 @@ const updateCoupon = async (req, res) => {
         // UPDATE ROLE
         // ==================================================
 
-        if (allowedRole !== undefined) {
+        if (
+            allowedRole !== undefined
+        ) {
 
             const normalizedRole =
                 normalizeRole(
                     allowedRole
                 );
-
-
-            const allowedRoles = [
-                "client",
-                "volunteer",
-                "employee",
-                "social_worker"
-            ];
 
 
             if (
@@ -1052,12 +1141,30 @@ const updateCoupon = async (req, res) => {
                 normalizedRole;
 
 
-            // Client doesn't need ID
+            // ------------------------------------------------
+            // DETERMINE WHETHER ID IS REQUIRED
+            // ------------------------------------------------
 
-            if (
-                normalizedRole ===
-                "client"
-            ) {
+            const roleRequiresId =
+                rolesRequiringId.includes(
+                    normalizedRole
+                );
+
+
+            if (roleRequiresId) {
+
+                coupon.requiresId =
+                    true;
+
+                coupon.idType =
+                    idType ||
+                    getDefaultIdType(
+                        normalizedRole
+                    );
+
+            }
+
+            else {
 
                 coupon.requiresId =
                     false;
@@ -1065,43 +1172,8 @@ const updateCoupon = async (req, res) => {
                 coupon.idType =
                     null;
 
-            }
-
-            else {
-
-                coupon.requiresId =
-                    true;
-
-
-                if (
-                    normalizedRole ===
-                    "volunteer"
-                ) {
-
-                    coupon.idType =
-                        "volunteer_id";
-
-                }
-
-                else if (
-                    normalizedRole ===
-                    "employee"
-                ) {
-
-                    coupon.idType =
-                        "employee_id";
-
-                }
-
-                else if (
-                    normalizedRole ===
-                    "social_worker"
-                ) {
-
-                    coupon.idType =
-                        "social_worker_id";
-
-                }
+                coupon.eligibleId =
+                    "";
 
             }
 
@@ -1114,12 +1186,15 @@ const updateCoupon = async (req, res) => {
 
         if (
             requiresId !== undefined &&
-            coupon.allowedRole !==
-            "client"
+            rolesRequiringId.includes(
+                normalizeRole(
+                    coupon.allowedRole
+                )
+            )
         ) {
 
-            coupon.requiresId =
-                Boolean(requiresId);
+            // These roles ALWAYS require ID.
+            coupon.requiresId = true;
 
         }
 
@@ -1128,10 +1203,33 @@ const updateCoupon = async (req, res) => {
         // UPDATE ID TYPE
         // ==================================================
 
-        if (idType !== undefined) {
+        if (
+            idType !== undefined &&
+            coupon.requiresId
+        ) {
+
+            const validIdType =
+                [
+                    "volunteer_id",
+                    "employee_id",
+                    "social_worker_id"
+                ].includes(idType);
+
+
+            if (!validIdType) {
+
+                return res.status(400).json({
+
+                    message:
+                        "Invalid ID type"
+
+                });
+
+            }
+
 
             coupon.idType =
-                idType || null;
+                idType;
 
         }
 
@@ -1140,12 +1238,16 @@ const updateCoupon = async (req, res) => {
         // UPDATE ELIGIBLE ID
         // ==================================================
 
-        if (eligibleId !== undefined) {
+        if (
+            eligibleId !== undefined
+        ) {
 
             coupon.eligibleId =
-                normalizeId(
-                    eligibleId
-                );
+                coupon.requiresId
+                    ? normalizeId(
+                        eligibleId
+                    )
+                    : "";
 
         }
 
@@ -1154,7 +1256,9 @@ const updateCoupon = async (req, res) => {
         // UPDATE ACTIVE
         // ==================================================
 
-        if (isActive !== undefined) {
+        if (
+            isActive !== undefined
+        ) {
 
             coupon.isActive =
                 Boolean(isActive);
@@ -1166,7 +1270,9 @@ const updateCoupon = async (req, res) => {
         // UPDATE EXPIRY
         // ==================================================
 
-        if (expiryDate !== undefined) {
+        if (
+            expiryDate !== undefined
+        ) {
 
             coupon.expiryDate =
                 expiryDate || null;
@@ -1181,7 +1287,11 @@ const updateCoupon = async (req, res) => {
         await coupon.save();
 
 
-        res.status(200).json({
+        // ==================================================
+        // RESPONSE
+        // ==================================================
+
+        return res.status(200).json({
 
             message:
                 "Coupon updated successfully",
@@ -1199,8 +1309,7 @@ const updateCoupon = async (req, res) => {
             error
         );
 
-
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to update coupon",
@@ -1232,6 +1341,10 @@ const deleteCoupon = async (req, res) => {
         } = req.params;
 
 
+        // ==================================================
+        // VALIDATE ID
+        // ==================================================
+
         if (
             !mongoose.Types.ObjectId.isValid(id)
         ) {
@@ -1245,6 +1358,10 @@ const deleteCoupon = async (req, res) => {
 
         }
 
+
+        // ==================================================
+        // DELETE
+        // ==================================================
 
         const coupon =
             await Coupon.findByIdAndDelete(id);
@@ -1262,7 +1379,11 @@ const deleteCoupon = async (req, res) => {
         }
 
 
-        res.status(200).json({
+        // ==================================================
+        // RESPONSE
+        // ==================================================
+
+        return res.status(200).json({
 
             message:
                 "Coupon deleted successfully"
@@ -1278,8 +1399,7 @@ const deleteCoupon = async (req, res) => {
             error
         );
 
-
-        res.status(500).json({
+        return res.status(500).json({
 
             message:
                 "Unable to delete coupon",
@@ -1315,3 +1435,4 @@ module.exports = {
     deleteCoupon
 
 };
+

@@ -27,20 +27,7 @@ function BookTest() {
     }
 
     // ======================================================
-    // USER ROLE
-    // ======================================================
-
-    const userRole = String(
-        user?.role || "client"
-    )
-        .toLowerCase()
-        .trim();
-
-    // ======================================================
     // NORMALIZE ROLE
-    // IMPORTANT:
-    // Keep each role separate because each role has
-    // its own coupon in MongoDB.
     // ======================================================
 
     const normalizeRole = (role) => {
@@ -50,7 +37,6 @@ function BookTest() {
             .replace(/-/g, "_")
             .replace(/\s+/g, "_");
 
-        // Client
         if (
             value === "client" ||
             value === "user" ||
@@ -59,29 +45,22 @@ function BookTest() {
             return "client";
         }
 
-        // Health Worker
         if (
             value === "health_worker" ||
-            value === "healthworker"
+            value === "healthworker" ||
+            value === "health-worker"
         ) {
             return "health_worker";
         }
 
-        // Volunteer
-        if (
-            value === "volunteer"
-        ) {
+        if (value === "volunteer") {
             return "volunteer";
         }
 
-        // Intern
-        if (
-            value === "intern"
-        ) {
+        if (value === "intern") {
             return "intern";
         }
 
-        // Social Worker
         if (
             value === "social_worker" ||
             value === "socialworker"
@@ -89,15 +68,14 @@ function BookTest() {
             return "social_worker";
         }
 
-        // Sahash Employee
         if (
             value === "sahash_employee" ||
-            value === "sahashemployee"
+            value === "sahashemployee" ||
+            value === "sahash-employee"
         ) {
             return "sahash_employee";
         }
 
-        // Normal Employee
         if (
             value === "employee" ||
             value === "staff"
@@ -108,14 +86,17 @@ function BookTest() {
         return value;
     };
 
-    const normalizedRole =
-        normalizeRole(userRole);
+    const normalizedRole = normalizeRole(
+        user?.role || "client"
+    );
 
     // ======================================================
     // ROLE DISPLAY NAME
     // ======================================================
 
     const getRoleDisplayName = (role) => {
+        const normalized = normalizeRole(role);
+
         const roleNames = {
             client: "Client",
             health_worker: "Health Worker",
@@ -123,12 +104,15 @@ function BookTest() {
             intern: "Intern",
             social_worker: "Social Worker",
             sahash_employee: "Sahash Employee",
-            employee: "Employee"
+            employee: "Employee",
+            admin: "Admin",
+            doctor: "Doctor",
+            lab: "Laboratory"
         };
 
         return (
-            roleNames[role] ||
-            role
+            roleNames[normalized] ||
+            String(role || "")
                 .replace(/_/g, " ")
                 .replace(/\b\w/g, (char) =>
                     char.toUpperCase()
@@ -137,17 +121,14 @@ function BookTest() {
     };
 
     // ======================================================
-    // STATES - LAB
+    // LAB STATES
     // ======================================================
 
     const [labs, setLabs] = useState([]);
-
     const [selectedLabId, setSelectedLabId] =
         useState("");
-
     const [selectedLab, setSelectedLab] =
         useState(null);
-
     const [loadingLabs, setLoadingLabs] =
         useState(true);
 
@@ -162,15 +143,15 @@ function BookTest() {
         "COVID-19 Test": 1200,
         "Vitamin Test": 800,
         "Liver Function Test": 1000,
-        "CBC": 600,
-        "Thyroid": 900,
-        "Diabetes": 700,
-        "Liver": 1000,
-        "Kidney": 1100
+        CBC: 600,
+        Thyroid: 900,
+        Diabetes: 700,
+        Liver: 1000,
+        Kidney: 1100
     };
 
     // ======================================================
-    // TESTS
+    // TEST STATES
     // ======================================================
 
     const [tests, setTests] = useState([
@@ -194,15 +175,11 @@ function BookTest() {
     // ======================================================
 
     const [coupons, setCoupons] = useState([]);
-
     const [loadingCoupons, setLoadingCoupons] =
         useState(true);
 
-    const [coupon, setCoupon] =
-        useState("");
-
-    const [discount, setDiscount] =
-        useState(0);
+    const [coupon, setCoupon] = useState("");
+    const [discount, setDiscount] = useState(0);
 
     const [couponMessage, setCouponMessage] =
         useState("");
@@ -221,7 +198,7 @@ function BookTest() {
         useState(false);
 
     // ======================================================
-    // GET TODAY'S DATE
+    // TODAY'S DATE
     // ======================================================
 
     const today = new Date()
@@ -241,14 +218,7 @@ function BookTest() {
     };
 
     // ======================================================
-    // CONVERT requiresId FROM MONGODB
-    //
-    // MongoDB screenshot contains values such as:
-    //
-    // requiresId: "true"
-    // requiresId: "false"
-    //
-    // This function supports both strings and booleans.
+    // CHECK COUPON ID REQUIREMENT
     // ======================================================
 
     const couponRequiresId = (selectedCoupon) => {
@@ -256,8 +226,7 @@ function BookTest() {
             return false;
         }
 
-        const value =
-            selectedCoupon.requiresId;
+        const value = selectedCoupon.requiresId;
 
         if (value === true) {
             return true;
@@ -275,14 +244,13 @@ function BookTest() {
     };
 
     // ======================================================
-    // GET ID LABEL
+    // ID LABEL
     // ======================================================
 
     const getIdLabel = () => {
-        const role =
-            normalizeCouponRole(
-                selectedCoupon?.allowedRole
-            );
+        const role = normalizeCouponRole(
+            selectedCoupon?.allowedRole
+        );
 
         switch (role) {
             case "volunteer":
@@ -312,14 +280,13 @@ function BookTest() {
     };
 
     // ======================================================
-    // GET ID PLACEHOLDER
+    // ID PLACEHOLDER
     // ======================================================
 
     const getIdPlaceholder = () => {
-        const role =
-            normalizeCouponRole(
-                selectedCoupon?.allowedRole
-            );
+        const role = normalizeCouponRole(
+            selectedCoupon?.allowedRole
+        );
 
         switch (role) {
             case "volunteer":
@@ -405,6 +372,7 @@ function BookTest() {
         const fetchCoupons = async () => {
             try {
                 setLoadingCoupons(true);
+                setCouponError("");
 
                 const response = await fetch(
                     "http://localhost:5000/api/coupons"
@@ -449,39 +417,21 @@ function BookTest() {
     }, []);
 
     // ======================================================
-    // AVAILABLE COUPONS FOR CURRENT USER
+    // AVAILABLE COUPONS
+    // ======================================================
     //
     // IMPORTANT:
-    // The coupon allowedRole must match the user's role.
+    // Show ALL coupons in the dropdown.
     //
-    // Example:
+    // The user's role is checked later inside
+    // applyCoupon().
     //
-    // user role = volunteer
-    // allowedRole = volunteer
-    // => VOL15 appears
-    //
-    // user role = intern
-    // allowedRole = intern
-    // => INT10 appears
-    //
-    // user role = health_worker
-    // allowedRole = health_worker
-    // => HW20 appears
+    // This means a Client can SEE all available
+    // coupon types, but cannot APPLY a Volunteer,
+    // Intern, Employee, etc. coupon.
     // ======================================================
 
-    const availableCoupons =
-        coupons.filter((item) => {
-
-            const couponRole =
-                normalizeCouponRole(
-                    item.allowedRole
-                );
-
-            return (
-                couponRole ===
-                normalizedRole
-            );
-        });
+    const availableCoupons = coupons;
 
     // ======================================================
     // SELECTED COUPON
@@ -545,8 +495,9 @@ function BookTest() {
         index,
         value
     ) => {
-        const updatedTests =
-            [...tests];
+        const updatedTests = [
+            ...tests
+        ];
 
         updatedTests[index] = {
             testName: value,
@@ -554,11 +505,8 @@ function BookTest() {
                 testPrices[value] || 0
         };
 
-        setTests(
-            updatedTests
-        );
+        setTests(updatedTests);
 
-        // Reset coupon when test changes
         if (coupon) {
             setCouponMessage(
                 "Test selection changed. Please apply the coupon again."
@@ -594,9 +542,7 @@ function BookTest() {
     // REMOVE TEST
     // ======================================================
 
-    const removeTestField = (
-        index
-    ) => {
+    const removeTestField = (index) => {
         if (tests.length === 1) {
             setTests([
                 {
@@ -620,9 +566,7 @@ function BookTest() {
                     testIndex !== index
             );
 
-        setTests(
-            updatedTests
-        );
+        setTests(updatedTests);
 
         setDiscount(0);
 
@@ -641,16 +585,11 @@ function BookTest() {
         const selectedCode =
             e.target.value;
 
-        setCoupon(
-            selectedCode
-        );
+        setCoupon(selectedCode);
 
         setDiscount(0);
-
         setCouponMessage("");
-
         setCouponError("");
-
         setSpecialId("");
     };
 
@@ -660,11 +599,7 @@ function BookTest() {
 
     const totalAmount =
         tests.reduce(
-            (
-                total,
-                current
-            ) => {
-
+            (total, current) => {
                 return (
                     total +
                     Number(
@@ -680,16 +615,9 @@ function BookTest() {
     // ======================================================
 
     const applyCoupon = () => {
-
         setCouponMessage("");
-
         setCouponError("");
-
         setDiscount(0);
-
-        // --------------------------------------------------
-        // NO COUPON
-        // --------------------------------------------------
 
         if (!coupon) {
             setCouponError(
@@ -698,10 +626,6 @@ function BookTest() {
 
             return;
         }
-
-        // --------------------------------------------------
-        // FIND COUPON
-        // --------------------------------------------------
 
         const selected =
             coupons.find(
@@ -722,31 +646,52 @@ function BookTest() {
             return;
         }
 
-        // --------------------------------------------------
-        // CHECK ROLE
-        // --------------------------------------------------
+        // ==================================================
+        // CHECK LOGGED-IN USER ROLE
+        // ==================================================
 
         const couponRole =
             normalizeCouponRole(
                 selected.allowedRole
             );
 
+        const loggedInRole =
+            normalizeRole(
+                normalizedRole
+            );
+
+        console.log(
+            "Logged-in role:",
+            loggedInRole
+        );
+
+        console.log(
+            "Coupon allowed role:",
+            couponRole
+        );
+
+        // ==================================================
+        // ROLE VALIDATION
+        // ==================================================
+
         if (
             couponRole !==
-            normalizedRole
+            loggedInRole
         ) {
             setCouponError(
                 `This coupon is only available for ${getRoleDisplayName(
                     couponRole
-                )} accounts.`
+                )} accounts. You are logged in as ${getRoleDisplayName(
+                    loggedInRole
+                )}.`
             );
 
             return;
         }
 
-        // --------------------------------------------------
-        // CHECK TOTAL
-        // --------------------------------------------------
+        // ==================================================
+        // TEST VALIDATION
+        // ==================================================
 
         if (totalAmount <= 0) {
             setCouponError(
@@ -756,9 +701,9 @@ function BookTest() {
             return;
         }
 
-        // --------------------------------------------------
-        // CHECK ID ONLY IF MONGODB SAYS requiresId = true
-        // --------------------------------------------------
+        // ==================================================
+        // SPECIAL ID VALIDATION
+        // ==================================================
 
         if (
             couponRequiresId(
@@ -787,32 +732,32 @@ function BookTest() {
             }
         }
 
-        // --------------------------------------------------
+        // ==================================================
         // APPLY DISCOUNT
-        // --------------------------------------------------
+        // ==================================================
 
         const discountValue =
             Number(
                 selected.discount || 0
             );
 
+        if (
+            discountValue <= 0
+        ) {
+            setCouponError(
+                "This coupon does not have a valid discount."
+            );
+
+            return;
+        }
+
         setDiscount(
             discountValue
         );
 
-        if (
-            couponRequiresId(
-                selected
-            )
-        ) {
-            setCouponMessage(
-                `${selected.code} applied successfully! You received ${discountValue}% discount.`
-            );
-        } else {
-            setCouponMessage(
-                `${selected.code} applied successfully! You received ${discountValue}% discount.`
-            );
-        }
+        setCouponMessage(
+            `${selected.code} applied successfully! You received ${discountValue}% discount.`
+        );
     };
 
     // ======================================================
@@ -841,12 +786,7 @@ function BookTest() {
     // ======================================================
 
     const submitHandler = async (e) => {
-
         e.preventDefault();
-
-        // ==================================================
-        // CHECK LOGIN
-        // ==================================================
 
         const token =
             localStorage.getItem(
@@ -854,34 +794,22 @@ function BookTest() {
             );
 
         if (!token) {
-
             alert(
                 "Please login before booking an appointment."
             );
 
-            navigate(
-                "/login"
-            );
+            navigate("/login");
 
             return;
         }
 
-        // ==================================================
-        // VALIDATE LAB
-        // ==================================================
-
         if (!selectedLabId) {
-
             alert(
                 "Please select a laboratory."
             );
 
             return;
         }
-
-        // ==================================================
-        // VALIDATE TESTS
-        // ==================================================
 
         const validTests =
             tests
@@ -898,7 +826,6 @@ function BookTest() {
         if (
             validTests.length === 0
         ) {
-
             alert(
                 "Please select at least one test."
             );
@@ -906,12 +833,7 @@ function BookTest() {
             return;
         }
 
-        // ==================================================
-        // VALIDATE DATE
-        // ==================================================
-
         if (!booking.date) {
-
             alert(
                 "Please select appointment date."
             );
@@ -919,12 +841,7 @@ function BookTest() {
             return;
         }
 
-        // ==================================================
-        // VALIDATE TIME
-        // ==================================================
-
         if (!booking.time) {
-
             alert(
                 "Please select appointment time."
             );
@@ -933,85 +850,77 @@ function BookTest() {
         }
 
         // ==================================================
-        // VALIDATE COUPON ID
+        // VERIFY COUPON ROLE AGAIN BEFORE BOOKING
         // ==================================================
 
-        if (
-            selectedCoupon &&
-            couponRequiresId(
-                selectedCoupon
-            )
-        ) {
+        if (selectedCoupon) {
+            const couponRole =
+                normalizeCouponRole(
+                    selectedCoupon.allowedRole
+                );
 
             if (
-                !specialId ||
-                specialId.trim() === ""
+                couponRole !==
+                normalizedRole
             ) {
-
                 alert(
-                    `Please enter your ${getIdLabel()}.`
+                    `The selected coupon is only available for ${getRoleDisplayName(
+                        couponRole
+                    )} accounts.`
                 );
 
                 return;
             }
+
+            if (
+                couponRequiresId(
+                    selectedCoupon
+                )
+            ) {
+                if (
+                    !specialId ||
+                    specialId.trim() === ""
+                ) {
+                    alert(
+                        `Please enter your ${getIdLabel()}.`
+                    );
+
+                    return;
+                }
+            }
         }
 
         try {
-
             setIsBooking(true);
 
-            // ==================================================
-            // DOCTOR ID
-            // ==================================================
-
-            const doctorId = null;
-
-            // ==================================================
-            // APPOINTMENT DATA
-            // ==================================================
-
             const appointmentData = {
-
                 patientId:
                     user._id ||
                     user.id,
 
-                doctorId:
-
-                    doctorId,
+                doctorId: null,
 
                 labId:
-
                     selectedLabId,
 
                 tests:
-
                     validTests,
 
                 date:
-
                     booking.date,
 
                 time:
-
                     booking.time,
 
-                // ------------------------------------------
-                // COUPON INFORMATION
-                // ------------------------------------------
-
                 coupon:
-
                     coupon || null,
 
                 discount:
-
                     Number(
                         discount || 0
                     ),
 
                 specialId:
-
                     selectedCoupon &&
                     couponRequiresId(
                         selectedCoupon
@@ -1020,15 +929,12 @@ function BookTest() {
                         : null,
 
                 totalAmount:
-
                     totalAmount,
 
                 discountAmount:
-
                     discountAmount,
 
                 finalAmount:
-
                     finalAmount
             };
 
@@ -1036,10 +942,6 @@ function BookTest() {
                 "Sending Appointment:",
                 appointmentData
             );
-
-            // ==================================================
-            // SEND TO BACKEND
-            // ==================================================
 
             const response =
                 await fetch(
@@ -1062,10 +964,6 @@ function BookTest() {
                     }
                 );
 
-            // ==================================================
-            // READ RESPONSE
-            // ==================================================
-
             const data =
                 await response.json();
 
@@ -1074,12 +972,7 @@ function BookTest() {
                 data
             );
 
-            // ==================================================
-            // CHECK RESPONSE
-            // ==================================================
-
             if (!response.ok) {
-
                 throw new Error(
                     data.message ||
                     "Unable to book appointment."
@@ -1093,52 +986,42 @@ function BookTest() {
             let history = [];
 
             try {
-
                 history =
                     JSON.parse(
                         localStorage.getItem(
                             "appointments"
                         )
                     ) || [];
-
             } catch {
                 history = [];
             }
 
             history.unshift({
-
                 patient:
                     user.name || "",
 
                 tests:
-
                     tests.filter(
                         (test) =>
                             test.testName
                     ),
 
                 totalAmount:
-
                     totalAmount,
 
                 coupon:
-
                     coupon || "",
 
                 discount:
-
                     discount,
 
                 discountAmount:
-
                     discountAmount,
 
                 finalAmount:
-
                     finalAmount,
 
                 specialId:
-
                     selectedCoupon &&
                     couponRequiresId(
                         selectedCoupon
@@ -1147,32 +1030,26 @@ function BookTest() {
                         : "",
 
                 date:
-
                     booking.date,
 
                 time:
-
                     booking.time,
 
                 lab:
-
                     selectedLab?.labName ||
                     selectedLab?.name ||
                     "",
 
                 labId:
-
                     selectedLab?._id ||
                     selectedLab?.id ||
                     selectedLabId,
 
                 appointmentId:
-
                     data.appointment?._id ||
                     data._id,
 
                 status:
-
                     data.appointment?.status ||
                     data.status ||
                     "Pending"
@@ -1185,10 +1062,6 @@ function BookTest() {
                 )
             );
 
-            // ==================================================
-            // REMOVE OLD PACKAGE SELECTIONS
-            // ==================================================
-
             localStorage.removeItem(
                 "selectedPackage"
             );
@@ -1197,10 +1070,6 @@ function BookTest() {
                 "selectedTest"
             );
 
-            // ==================================================
-            // RESET TESTS
-            // ==================================================
-
             setTests([
                 {
                     testName: "",
@@ -1208,39 +1077,25 @@ function BookTest() {
                 }
             ]);
 
-            // ==================================================
-            // RESET DATE / TIME
-            // ==================================================
-
             setBooking({
                 date: "",
                 time: ""
             });
 
-            // ==================================================
-            // RESET COUPON
-            // ==================================================
-
             setCoupon("");
-
             setDiscount(0);
-
             setSpecialId("");
-
             setCouponMessage("");
-
             setCouponError("");
 
-            // ==================================================
-            // SUCCESS
-            // ==================================================
-
             alert(
-                `Appointment Confirmed Successfully!\n\nTotal: ₹${totalAmount}\nDiscount: ₹${discountAmount}\nFinal Amount: ₹${finalAmount}`
+                `Appointment Confirmed Successfully!\n\nTotal: ₹${totalAmount}\nDiscount: ₹${discountAmount.toFixed(
+                    2
+                )}\nFinal Amount: ₹${finalAmount.toFixed(
+                    2
+                )}`
             );
-
         } catch (err) {
-
             console.error(
                 "Booking Error:",
                 err
@@ -1250,11 +1105,8 @@ function BookTest() {
                 err.message ||
                 "Unable to book appointment."
             );
-
         } finally {
-
             setIsBooking(false);
-
         }
     };
 
@@ -1267,71 +1119,92 @@ function BookTest() {
 
             <div className="booking-container">
 
-                {/* ==================================================
-                    HEADING
-                ================================================== */}
+                <div className="booking-header">
 
-                <h1>
-                    🧪 Schedule Lab Tests
-                </h1>
+                    <div className="header-icon">
+                        🧪
+                    </div>
 
-                {/* ==================================================
-                    FORM
-                ================================================== */}
+                    <div>
+                        <h1>
+                            Schedule Lab Tests
+                        </h1>
+
+                        <p>
+                            Book your laboratory tests quickly and conveniently.
+                        </p>
+                    </div>
+
+                </div>
 
                 <form
-                    onSubmit={
-                        submitHandler
-                    }
+                    onSubmit={submitHandler}
                 >
 
                     {/* ==================================================
                         PATIENT INFORMATION
                     ================================================== */}
 
-                    <div className="patient-info">
+                    <section className="form-section">
 
-                        <input
-                            value={
-                                user.name || ""
-                            }
-                            disabled
-                            placeholder="Patient Name"
-                        />
+                        <div className="section-title">
+                            <span>👤</span>
+                            Patient Information
+                        </div>
 
-                        <input
-                            value={
-                                user.email || ""
-                            }
-                            disabled
-                            placeholder="Email"
-                        />
+                        <div className="patient-info">
 
-                    </div>
+                            <div className="input-group">
+
+                                <label>
+                                    Patient Name
+                                </label>
+
+                                <input
+                                    value={
+                                        user.name || ""
+                                    }
+                                    disabled
+                                />
+
+                            </div>
+
+                            <div className="input-group">
+
+                                <label>
+                                    Email Address
+                                </label>
+
+                                <input
+                                    value={
+                                        user.email || ""
+                                    }
+                                    disabled
+                                />
+
+                            </div>
+
+                        </div>
+
+                    </section>
 
                     {/* ==================================================
                         LAB SELECTION
                     ================================================== */}
 
-                    <div className="lab-selection">
+                    <section className="form-section">
 
-                        <h3>
+                        <div className="section-title">
+                            <span>🏥</span>
                             Select Laboratory
-                        </h3>
+                        </div>
 
-                        <p
-                            style={{
-                                marginBottom:
-                                    "10px",
-                                color:
-                                    "#666"
-                            }}
-                        >
-                            Select the laboratory where
-                            you want to perform your tests.
+                        <p className="section-description">
+                            Select the laboratory where you want to perform your tests.
                         </p>
 
                         <select
+                            className="full-select"
                             value={
                                 selectedLabId
                             }
@@ -1373,330 +1246,379 @@ function BookTest() {
 
                         </select>
 
-                        {/* ==================================================
-                            SELECTED LAB DETAILS
-                        ================================================== */}
-
                         {selectedLab && (
-                            <div
-                                className="selected-lab"
-                                style={{
-                                    marginTop:
-                                        "15px",
-                                    padding:
-                                        "15px",
-                                    borderRadius:
-                                        "10px",
-                                    background:
-                                        "#f4f8ff"
-                                }}
-                            >
+                            <div className="selected-lab">
 
-                                <h3>
-                                    🏥 Selected Lab
-                                </h3>
-
-                                <p>
+                                <div>
                                     <strong>
-                                        Name:
-                                    </strong>{" "}
-                                    {
-                                        selectedLab.labName ||
-                                        selectedLab.name
-                                    }
-                                </p>
+                                        Laboratory
+                                    </strong>
 
-                                <p>
-                                    <strong>
-                                        Location:
-                                    </strong>{" "}
-                                    {
-                                        selectedLab.location ||
-                                        "Not specified"
-                                    }
-                                </p>
+                                    <span>
+                                        {
+                                            selectedLab.labName ||
+                                            selectedLab.name
+                                        }
+                                    </span>
+                                </div>
 
-                                <p>
+                                <div>
                                     <strong>
-                                        Lab ID:
-                                    </strong>{" "}
-                                    {
-                                        selectedLab.labId ||
-                                        selectedLab._id
-                                    }
-                                </p>
+                                        Location
+                                    </strong>
+
+                                    <span>
+                                        {
+                                            selectedLab.location ||
+                                            "Not specified"
+                                        }
+                                    </span>
+                                </div>
 
                             </div>
                         )}
 
-                    </div>
+                    </section>
 
                     {/* ==================================================
                         TESTS
                     ================================================== */}
 
-                    <h3>
-                        Select Tests
-                    </h3>
+                    <section className="form-section">
 
-                    <p
-                        style={{
-                            marginBottom:
-                                "15px",
-                            color:
-                                "#666"
-                        }}
-                    >
-                        Select the tests you
-                        want to book.
-                    </p>
+                        <div className="section-title">
+                            <span>🔬</span>
+                            Select Tests
+                        </div>
 
-                    {tests.map(
-                        (
-                            test,
-                            index
-                        ) => (
+                        <p className="section-description">
+                            Select the tests you want to book.
+                        </p>
 
-                            <div
-                                key={index}
-                                className="test-row"
-                            >
+                        <div className="tests-wrapper">
 
-                                {/* TEST */}
+                            {tests.map(
+                                (
+                                    test,
+                                    index
+                                ) => (
 
-                                <select
-                                    value={
-                                        test.testName
-                                    }
-                                    onChange={
-                                        (e) =>
-                                            handleTestChange(
-                                                index,
-                                                e.target.value
-                                            )
-                                    }
-                                    required
-                                >
-
-                                    <option value="">
-                                        Select Test
-                                    </option>
-
-                                    {Object.keys(
-                                        testPrices
-                                    ).map(
-                                        (item) => (
-                                            <option
-                                                key={
-                                                    item
-                                                }
-                                                value={
-                                                    item
-                                                }
-                                            >
-                                                {
-                                                    item
-                                                }
-                                            </option>
-                                        )
-                                    )}
-
-                                </select>
-
-                                {/* PRICE */}
-
-                                <input
-                                    value={
-                                        test.amount
-                                            ? `₹${test.amount}`
-                                            : ""
-                                    }
-                                    disabled
-                                    placeholder="Price"
-                                />
-
-                                {/* REMOVE */}
-
-                                {tests.length > 1 && (
-                                    <button
-                                        type="button"
-                                        className="remove-test-btn"
-                                        onClick={() =>
-                                            removeTestField(
-                                                index
-                                            )
-                                        }
+                                    <div
+                                        key={index}
+                                        className="test-row"
                                     >
-                                        ✕
-                                    </button>
-                                )}
 
-                            </div>
-                        )
-                    )}
+                                        <div className="test-select-wrapper">
 
-                    {/* ==================================================
-                        ADD TEST
-                    ================================================== */}
+                                            <label>
+                                                Test {index + 1}
+                                            </label>
 
-                    <button
-                        type="button"
-                        className="add-test-btn"
-                        onClick={
-                            addTestField
-                        }
-                    >
-                        + Add Another Test
-                    </button>
+                                            <select
+                                                value={
+                                                    test.testName
+                                                }
+                                                onChange={
+                                                    (e) =>
+                                                        handleTestChange(
+                                                            index,
+                                                            e.target.value
+                                                        )
+                                                }
+                                                required
+                                            >
+
+                                                <option value="">
+                                                    Select Test
+                                                </option>
+
+                                                {Object.keys(
+                                                    testPrices
+                                                ).map(
+                                                    (item) => (
+                                                        <option
+                                                            key={
+                                                                item
+                                                            }
+                                                            value={
+                                                                item
+                                                            }
+                                                        >
+                                                            {
+                                                                item
+                                                            }
+                                                        </option>
+                                                    )
+                                                )}
+
+                                            </select>
+
+                                        </div>
+
+                                        <div className="price-wrapper">
+
+                                            <label>
+                                                Price
+                                            </label>
+
+                                            <input
+                                                value={
+                                                    test.amount
+                                                        ? `₹${test.amount}`
+                                                        : ""
+                                                }
+                                                disabled
+                                                placeholder="Price"
+                                            />
+
+                                        </div>
+
+                                        {tests.length >
+                                            1 && (
+
+                                                <button
+                                                    type="button"
+                                                    className="remove-test-btn"
+                                                    onClick={() =>
+                                                        removeTestField(
+                                                            index
+                                                        )
+                                                    }
+                                                    title="Remove test"
+                                                >
+                                                    ✕
+                                                </button>
+
+                                            )}
+
+                                    </div>
+
+                                )
+                            )}
+
+                        </div>
+
+                        <button
+                            type="button"
+                            className="add-test-btn"
+                            onClick={
+                                addTestField
+                            }
+                        >
+                            + Add Another Test
+                        </button>
+
+                    </section>
 
                     {/* ==================================================
                         DATE & TIME
                     ================================================== */}
 
-                    <div
-                        className="schedule-section"
-                    >
+                    <section className="form-section">
 
-                        <div>
+                        <div className="section-title">
+                            <span>📅</span>
+                            Appointment Schedule
+                        </div>
 
-                            <label>
-                                Appointment Date
-                            </label>
+                        <div className="schedule-section">
 
-                            <input
-                                type="date"
-                                name="date"
-                                value={
-                                    booking.date
-                                }
-                                required
-                                min={
-                                    today
-                                }
-                                onChange={
-                                    handleBookingChange
-                                }
-                            />
+                            <div className="input-group">
+
+                                <label>
+                                    Appointment Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    name="date"
+                                    value={
+                                        booking.date
+                                    }
+                                    required
+                                    min={
+                                        today
+                                    }
+                                    onChange={
+                                        handleBookingChange
+                                    }
+                                />
+
+                            </div>
+
+                            <div className="input-group">
+
+                                <label>
+                                    Appointment Time
+                                </label>
+
+                                <input
+                                    type="time"
+                                    name="time"
+                                    value={
+                                        booking.time
+                                    }
+                                    required
+                                    onChange={
+                                        handleBookingChange
+                                    }
+                                />
+
+                            </div>
 
                         </div>
 
-                        <div>
-
-                            <label>
-                                Appointment Time
-                            </label>
-
-                            <input
-                                type="time"
-                                name="time"
-                                value={
-                                    booking.time
-                                }
-                                required
-                                onChange={
-                                    handleBookingChange
-                                }
-                            />
-
-                        </div>
-
-                    </div>
+                    </section>
 
                     {/* ==================================================
-                        COUPON SECTION
+                        COUPON
                     ================================================== */}
 
-                    <div
-                        className="coupon-box"
-                    >
+                    <section className="form-section coupon-section">
 
-                        <h3>
-                            🎟️ Discount Coupon
-                        </h3>
+                        <div className="section-title">
+                            <span>🎟️</span>
+                            Discount Coupon
+                        </div>
 
-                        <p
-                            style={{
-                                marginBottom:
-                                    "12px",
-                                color:
-                                    "#666"
-                            }}
-                        >
-                            Account Type:{" "}
+                        <div className="account-type">
+
+                            Logged-in Account:
 
                             <strong>
+                                {" "}
                                 {
                                     getRoleDisplayName(
                                         normalizedRole
                                     )
                                 }
                             </strong>
-                        </p>
 
-                        {/* ==================================================
-                            COUPON SELECT
-                        ================================================== */}
+                        </div>
 
-                        <select
-                            value={
-                                coupon
-                            }
-                            onChange={
-                                handleCouponChange
-                            }
-                            disabled={
-                                loadingCoupons
-                            }
-                        >
+                        <div className="coupon-grid">
 
-                            <option value="">
-                                {loadingCoupons
-                                    ? "Loading coupons..."
-                                    : "Select Coupon"}
-                            </option>
+                            <div className="input-group">
 
-                            {availableCoupons.length >
-                            0 ? (
+                                <label>
+                                    Select Coupon
+                                </label>
 
-                                availableCoupons.map(
-                                    (item) => (
-                                        <option
-                                            key={
-                                                item._id ||
-                                                item.code
-                                            }
-                                            value={
-                                                item.code
-                                            }
-                                        >
-                                            {
-                                                item.code
-                                            }
-                                            {" - "}
-                                            {
-                                                item.discount
-                                            }%
-                                            {" Discount"}
-                                        </option>
-                                    )
-                                )
+                                <select
+                                    value={
+                                        coupon
+                                    }
+                                    onChange={
+                                        handleCouponChange
+                                    }
+                                    disabled={
+                                        loadingCoupons
+                                    }
+                                >
 
-                            ) : (
-
-                                !loadingCoupons && (
-                                    <option
-                                        value=""
-                                        disabled
-                                    >
-                                        No coupon available for your account
+                                    <option value="">
+                                        {loadingCoupons
+                                            ? "Loading coupons..."
+                                            : "Select Coupon"}
                                     </option>
-                                )
+
+                                    {availableCoupons.length >
+                                    0 ? (
+
+                                        availableCoupons.map(
+                                            (item) => (
+
+                                                <option
+                                                    key={
+                                                        item._id ||
+                                                        item.code
+                                                    }
+                                                    value={
+                                                        item.code
+                                                    }
+                                                >
+
+                                                    {item.code}
+                                                    {" - "}
+                                                    {item.discount}
+                                                    %
+                                                    {" Discount - "}
+                                                    {
+                                                        getRoleDisplayName(
+                                                            normalizeCouponRole(
+                                                                item.allowedRole
+                                                            )
+                                                        )
+                                                    }
+
+                                                </option>
+
+                                            )
+                                        )
+
+                                    ) : (
+
+                                        !loadingCoupons && (
+                                            <option
+                                                value=""
+                                                disabled
+                                            >
+                                                No coupons available
+                                            </option>
+                                        )
+
+                                    )}
+
+                                </select>
+
+                            </div>
+
+                            {selectedCoupon && (
+
+                                <div className="coupon-details">
+
+                                    <strong>
+                                        Coupon:
+                                    </strong>
+
+                                    <span>
+                                        {
+                                            selectedCoupon.code
+                                        }
+                                    </span>
+
+                                    <strong>
+                                        Discount:
+                                    </strong>
+
+                                    <span>
+                                        {
+                                            selectedCoupon.discount
+                                        }%
+                                    </span>
+
+                                    <strong>
+                                        Available For:
+                                    </strong>
+
+                                    <span>
+                                        {
+                                            getRoleDisplayName(
+                                                normalizeCouponRole(
+                                                    selectedCoupon.allowedRole
+                                                )
+                                            )
+                                        }
+                                    </span>
+
+                                </div>
+
                             )}
 
-                        </select>
+                        </div>
 
                         {/* ==================================================
-                            ID MESSAGE / INPUT
+                            ID FIELD
                         ================================================== */}
 
                         {selectedCoupon &&
@@ -1704,110 +1626,76 @@ function BookTest() {
                                 selectedCoupon
                             ) && (
 
-                                <div
-                                    style={{
-                                        marginTop:
-                                            "12px"
-                                    }}
-                                >
+                                <div className="special-id-box">
 
-                                    <label
-                                        style={{
-                                            display:
-                                                "block",
-                                            marginBottom:
-                                                "6px",
-                                            fontWeight:
-                                                "600"
-                                        }}
-                                    >
-                                        {getIdLabel()}
-                                    </label>
+                                    <div className="input-group">
 
-                                    <input
-                                        type="text"
-                                        value={
-                                            specialId
-                                        }
-                                        onChange={
-                                            (e) => {
-                                                setSpecialId(
-                                                    e.target.value
-                                                );
-
-                                                setCouponError(
-                                                    ""
-                                                );
-
-                                                setCouponMessage(
-                                                    ""
-                                                );
-
-                                                setDiscount(
-                                                    0
-                                                );
+                                        <label>
+                                            {
+                                                getIdLabel()
                                             }
-                                        }
-                                        placeholder={
-                                            getIdPlaceholder()
-                                        }
-                                    />
+                                        </label>
 
-                                    <small
-                                        style={{
-                                            display:
-                                                "block",
-                                            marginTop:
-                                                "5px",
-                                            color:
-                                                "#777"
-                                        }}
-                                    >
-                                        Enter your valid{" "}
-                                        {getIdLabel()}{" "}
-                                        to avail this discount.
-                                    </small>
+                                        <input
+                                            type="text"
+                                            value={
+                                                specialId
+                                            }
+                                            onChange={
+                                                (e) => {
+                                                    setSpecialId(
+                                                        e.target.value
+                                                    );
+
+                                                    setCouponError(
+                                                        ""
+                                                    );
+
+                                                    setCouponMessage(
+                                                        ""
+                                                    );
+
+                                                    setDiscount(
+                                                        0
+                                                    );
+                                                }
+                                            }
+                                            placeholder={
+                                                getIdPlaceholder()
+                                            }
+                                        />
+
+                                        <small>
+                                            Enter your valid{" "}
+                                            {
+                                                getIdLabel()
+                                            }{" "}
+                                            to avail this discount.
+                                        </small>
+
+                                    </div>
 
                                 </div>
-                            )}
 
-                        {/* ==================================================
-                            NO ID MESSAGE
-                        ================================================== */}
+                            )}
 
                         {selectedCoupon &&
                             !couponRequiresId(
                                 selectedCoupon
                             ) && (
 
-                                <div
-                                    style={{
-                                        marginTop:
-                                            "10px",
-                                        color:
-                                            "#666",
-                                        fontSize:
-                                            "14px"
-                                    }}
-                                >
-                                    This coupon is available
-                                    without an additional ID.
+                                <div className="no-id-message">
+                                    ✓ This coupon is available without an additional ID.
                                 </div>
-                            )}
 
-                        {/* ==================================================
-                            APPLY BUTTON
-                        ================================================== */}
+                            )}
 
                         <button
                             type="button"
+                            className="apply-coupon-btn"
                             onClick={
                                 applyCoupon
                             }
-                            style={{
-                                marginTop:
-                                    "12px"
-                            }}
                             disabled={
                                 !coupon ||
                                 totalAmount <= 0
@@ -1816,99 +1704,81 @@ function BookTest() {
                             Apply Coupon
                         </button>
 
-                        {/* ==================================================
-                            SUCCESS MESSAGE
-                        ================================================== */}
-
                         {couponMessage && (
-                            <div
-                                style={{
-                                    marginTop:
-                                        "10px",
-                                    padding:
-                                        "10px",
-                                    borderRadius:
-                                        "6px",
-                                    background:
-                                        "#e8f7ee",
-                                    color:
-                                        "#187a3d"
-                                }}
-                            >
-                                ✓{" "}
-                                {
-                                    couponMessage
-                                }
+                            <div className="coupon-success">
+                                ✓ {couponMessage}
                             </div>
                         )}
-
-                        {/* ==================================================
-                            ERROR MESSAGE
-                        ================================================== */}
 
                         {couponError && (
-                            <div
-                                style={{
-                                    marginTop:
-                                        "10px",
-                                    padding:
-                                        "10px",
-                                    borderRadius:
-                                        "6px",
-                                    background:
-                                        "#fff0f0",
-                                    color:
-                                        "#d32f2f"
-                                }}
-                            >
-                                ⚠{" "}
-                                {
-                                    couponError
-                                }
+                            <div className="coupon-error">
+                                ⚠ {couponError}
                             </div>
                         )}
 
-                    </div>
+                    </section>
 
                     {/* ==================================================
                         BILL SUMMARY
                     ================================================== */}
 
-                    <div
-                        className="total-section"
-                    >
+                    <section className="total-section">
 
-                        <h3>
-                            Total:
-                            {" "}
-                            ₹{totalAmount}
-                        </h3>
+                        <div className="summary-row">
 
-                        <h3>
-                            Discount:
-                            {" "}
-                            {discount}%
-                        </h3>
+                            <span>
+                                Total Amount
+                            </span>
 
-                        <h3>
-                            Discount Amount:
-                            {" "}
-                            ₹
-                            {discountAmount.toFixed(
-                                2
-                            )}
-                        </h3>
+                            <strong>
+                                ₹{totalAmount}
+                            </strong>
 
-                        <h2>
-                            Final:
-                            {" "}
-                            ₹
-                            {finalAmount.toFixed(
-                                2
-                            )}
-                        </h2>
+                        </div>
 
-                    </div>
+                        <div className="summary-row">
+
+                            <span>
+                                Discount
+                            </span>
+
+                            <strong>
+                                {discount}%
+                            </strong>
+
+                        </div>
+
+                        <div className="summary-row">
+
+                            <span>
+                                Discount Amount
+                            </span>
+
+                            <strong>
+                                ₹
+                                {discountAmount.toFixed(
+                                    2
+                                )}
+                            </strong>
+
+                        </div>
+
+                        <div className="final-row">
+
+                            <span>
+                                Final Amount
+                            </span>
+
+                            <strong>
+                                ₹
+                                {finalAmount.toFixed(
+                                    2
+                                )}
+                            </strong>
+
+                        </div>
+
+                    </section>
 
                     {/* ==================================================
                         CONFIRM

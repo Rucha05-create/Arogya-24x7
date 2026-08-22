@@ -1,657 +1,705 @@
 /* =========================================================
    BOOK TEST PAGE
-   AROGYA 24×7
-   ========================================================= */
+========================================================= */
 
-.bookTestPage {
-  min-height: 100vh;
-  background: #f3f7fd;
-  padding: 110px 20px 50px;
-  box-sizing: border-box;
+.booking-page {
+    min-height: calc(100vh - 70px);
+    width: 100%;
+    background: #f3f7fd;
+    padding: 35px 25px 60px;
+    box-sizing: border-box;
 }
-
 
 /* =========================================================
-   MAIN CONTAINER
-   ========================================================= */
+   MAIN WHITE BOX
+========================================================= */
 
-.bookTestContainer {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  background: #ffffff;
-  border-radius: 22px;
-  padding: 40px;
-  box-sizing: border-box;
-  box-shadow: 0 12px 35px rgba(30, 76, 120, 0.12);
+.booking-container {
+    width: min(1050px, 100%);
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 38px 42px;
+    box-sizing: border-box;
+
+    box-shadow:
+        0 10px 35px rgba(30, 75, 130, 0.12);
+
+    border: 1px solid #e5ebf3;
 }
-
 
 /* =========================================================
-   PAGE HEADER
-   ========================================================= */
+   HEADER
+========================================================= */
 
-.bookTestHeader {
-  text-align: center;
-  margin-bottom: 35px;
+.booking-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+
+    border-bottom: 1px solid #e7edf5;
 }
 
-.bookTestHeader h1 {
-  margin: 0;
-  color: #123f70;
-  font-size: 32px;
-  font-weight: 700;
+.header-icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eaf3ff;
+    border-radius: 14px;
+
+    font-size: 27px;
 }
 
-.bookTestHeader p {
-  margin: 10px 0 0;
-  color: #66788d;
-  font-size: 15px;
-  line-height: 1.6;
+.booking-header h1 {
+    margin: 0;
+
+    font-size: 30px;
+    font-weight: 700;
+
+    color: #111827;
 }
 
+.booking-header p {
+    margin: 6px 0 0;
+
+    font-size: 14px;
+    color: #6b7280;
+}
 
 /* =========================================================
-   FORM GROUP
-   ========================================================= */
+   FORM SECTION
+========================================================= */
 
-.formGroup {
-  margin-bottom: 25px;
+.form-section {
+    margin-bottom: 30px;
+    padding-bottom: 28px;
+
+    border-bottom: 1px solid #edf1f6;
 }
 
-.formGroup label {
-  display: block;
-  margin-bottom: 9px;
-  color: #173f68;
-  font-size: 15px;
-  font-weight: 600;
+.form-section:last-of-type {
+    border-bottom: none;
 }
-
-.formGroup input,
-.formGroup select {
-  width: 100%;
-  height: 48px;
-  padding: 0 14px;
-  border: 1px solid #d4deea;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #172b3f;
-  font-size: 14px;
-  outline: none;
-  box-sizing: border-box;
-  transition: 0.2s ease;
-}
-
-.formGroup input:focus,
-.formGroup select:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12);
-}
-
-.formGroup input::placeholder {
-  color: #9aa8b7;
-}
-
 
 /* =========================================================
-   LABORATORY SECTION
-   ========================================================= */
+   SECTION TITLE
+========================================================= */
 
-.labSection {
-  margin-bottom: 30px;
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    margin-bottom: 7px;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #172033;
 }
 
-.labSection label {
-  display: block;
-  margin-bottom: 10px;
-  color: #173f68;
-  font-size: 15px;
-  font-weight: 600;
+.section-title span {
+    font-size: 19px;
 }
 
-.labSection select {
-  width: 100%;
-  height: 50px;
-  padding: 0 15px;
-  border: 1px solid #d5dfeb;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #26384b;
-  font-size: 14px;
-  cursor: pointer;
-  outline: none;
-}
+.section-description {
+    margin: 0 0 16px;
 
-.labSection select:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12);
+    color: #6b7280;
+    font-size: 14px;
 }
-
 
 /* =========================================================
-   SELECT TESTS
-   ========================================================= */
+   INPUT GROUP
+========================================================= */
 
-.testsSection {
-  margin-top: 25px;
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
 }
 
-.testsSection h2 {
-  margin: 0;
-  color: #172f48;
-  font-size: 20px;
-  font-weight: 700;
+.input-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
 }
-
-.testsSection > p {
-  margin: 8px 0 20px;
-  color: #687b91;
-  font-size: 14px;
-}
-
 
 /* =========================================================
-   TEST ROW
-   ========================================================= */
+   PATIENT INFORMATION
+========================================================= */
 
-.testRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 230px;
-  gap: 14px;
-  margin-bottom: 15px;
-  align-items: center;
+.patient-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
 }
 
-.testRow select,
-.testRow input {
-  width: 100%;
-  height: 48px;
-  padding: 0 14px;
-  border: 1px solid #d6e0eb;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #26384b;
-  font-size: 14px;
-  outline: none;
-  box-sizing: border-box;
+.patient-info input {
+    width: 100%;
+    box-sizing: border-box;
 }
-
-.testRow select:focus,
-.testRow input:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.10);
-}
-
 
 /* =========================================================
-   PRICE FIELD
-   ========================================================= */
+   COMMON INPUTS
+========================================================= */
 
-.testPrice {
-  background: #fafafa !important;
-  color: #68798c !important;
-  cursor: not-allowed;
+input,
+select {
+    width: 100%;
+    min-height: 48px;
+
+    padding: 12px 14px;
+
+    border: 1px solid #d7dee8;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #1f2937;
+
+    font-size: 14px;
+
+    box-sizing: border-box;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
+input:focus,
+select:focus {
+    border-color: #1976d2;
+
+    box-shadow:
+        0 0 0 3px rgba(25, 118, 210, 0.10);
+}
+
+input:disabled {
+    background: #f7f9fc;
+    color: #4b5563;
+    cursor: not-allowed;
+}
 
 /* =========================================================
-   REMOVE TEST BUTTON
-   ========================================================= */
+   LAB SELECT
+========================================================= */
 
-.removeTestButton {
-  width: 42px;
-  height: 42px;
-  border: none;
-  border-radius: 8px;
-  background: #ffe9e9;
-  color: #d93636;
-  font-size: 20px;
-  cursor: pointer;
-  transition: 0.2s ease;
+.full-select {
+    width: 100%;
 }
-
-.removeTestButton:hover {
-  background: #ffd5d5;
-  transform: scale(1.04);
-}
-
 
 /* =========================================================
-   ADD ANOTHER TEST
-   ========================================================= */
+   SELECTED LAB
+========================================================= */
 
-.addTestButton {
-  width: 100%;
-  height: 48px;
-  margin: 8px 0 30px;
-  border: none;
-  border-radius: 9px;
-  background: #238daa;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s ease;
+.selected-lab {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+
+    margin-top: 15px;
+    padding: 16px 18px;
+
+    background: #f4f8ff;
+
+    border: 1px solid #dceaff;
+    border-radius: 10px;
 }
 
-.addTestButton:hover {
-  background: #197b96;
-  transform: translateY(-1px);
+.selected-lab div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.addTestButton:active {
-  transform: translateY(0);
+.selected-lab strong {
+    font-size: 12px;
+    text-transform: uppercase;
+
+    color: #6b7280;
 }
 
+.selected-lab span {
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #1f2937;
+}
 
 /* =========================================================
-   APPOINTMENT DATE + TIME
-   ========================================================= */
+   TESTS
+========================================================= */
 
-.appointmentSection {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-  margin-top: 10px;
-  margin-bottom: 25px;
+.tests-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
-.appointmentField {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.test-row {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        190px
+        42px;
+
+    gap: 14px;
+
+    align-items: end;
 }
 
-.appointmentField label {
-  white-space: nowrap;
-  color: #172f48;
-  font-size: 15px;
-  font-weight: 500;
+.test-select-wrapper,
+.price-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
 }
 
-.appointmentField input {
-  width: 145px;
-  height: 48px;
-  padding: 0 12px;
-  border: 1px solid #d4deea;
-  border-radius: 9px;
-  background: #ffffff;
-  color: #26384b;
-  outline: none;
-  box-sizing: border-box;
+.test-select-wrapper label,
+.price-wrapper label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
 }
 
-.appointmentField input:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.10);
+/* =========================================================
+   REMOVE TEST
+========================================================= */
+
+.remove-test-btn {
+    width: 42px;
+    height: 48px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #fff1f1;
+    color: #dc2626;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
+.remove-test-btn:hover {
+    background: #ffe1e1;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   ADD TEST BUTTON
+========================================================= */
+
+.add-test-btn {
+    width: 100%;
+
+    margin-top: 17px;
+
+    min-height: 48px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #ff9800;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.add-test-btn:hover {
+    background: #f28b00;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   SCHEDULE
+========================================================= */
+
+.schedule-section {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 24px;
+}
 
 /* =========================================================
    COUPON SECTION
-   ========================================================= */
+========================================================= */
 
-.couponSection {
-  margin-top: 15px;
-  margin-bottom: 25px;
+.coupon-section {
+    position: relative;
 }
 
-.couponContainer {
-  display: flex;
-  width: 100%;
-  gap: 10px;
-}
+.account-type {
+    margin-bottom: 18px;
 
-.couponContainer input {
-  flex: 1;
-  height: 48px;
-  padding: 0 15px;
-  border: 1px solid #d4deea;
-  border-radius: 9px;
-  outline: none;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
-.couponContainer input:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.10);
-}
-
-.couponContainer button {
-  min-width: 90px;
-  height: 48px;
-  border: none;
-  border-radius: 8px;
-  background: #eeeeee;
-  color: #172f48;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.couponContainer button:hover {
-  background: #dedede;
-}
-
-
-/* =========================================================
-   COUPON SUCCESS MESSAGE
-   ========================================================= */
-
-.couponSuccess {
-  margin-top: 10px;
-  padding: 10px 13px;
-  border-radius: 8px;
-  background: #eaf8ef;
-  color: #23743d;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-
-/* =========================================================
-   COUPON ERROR MESSAGE
-   ========================================================= */
-
-.couponError {
-  margin-top: 10px;
-  padding: 10px 13px;
-  border-radius: 8px;
-  background: #fff0f0;
-  color: #c62828;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-
-/* =========================================================
-   COUPON OPTIONS
-   ========================================================= */
-
-.couponOptions {
-  margin-top: 12px;
-  padding: 14px;
-  border-radius: 10px;
-  background: #f6f9fd;
-  border: 1px solid #e0e8f1;
-}
-
-.couponOptionsTitle {
-  margin-bottom: 10px;
-  color: #173f68;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.couponOption {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #e3e9f0;
-}
-
-.couponOption:last-child {
-  border-bottom: none;
-}
-
-.couponCode {
-  color: #1a5c91;
-  font-weight: 700;
-}
-
-.couponDiscount {
-  color: #288044;
-  font-weight: 600;
-}
-
-
-/* =========================================================
-   TOTAL SUMMARY
-   ========================================================= */
-
-.totalSection {
-  margin-top: 20px;
-  padding: 24px;
-  border-radius: 15px;
-  background: #f4f8fe;
-}
-
-.totalRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  color: #172f48;
-  font-size: 16px;
-}
-
-.totalRow:last-child {
-  margin-bottom: 0;
-}
-
-.discountRow {
-  color: #278044;
-}
-
-.finalRow {
-  margin-top: 10px;
-  padding-top: 12px;
-  border-top: 1px solid #dbe4ef;
-  font-size: 23px;
-  font-weight: 700;
-}
-
-
-/* =========================================================
-   CONFIRM APPOINTMENT BUTTON
-   ========================================================= */
-
-.confirmButton {
-  width: 100%;
-  height: 52px;
-  margin-top: 20px;
-  border: none;
-  border-radius: 9px;
-  background: #176ac2;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s ease;
-}
-
-.confirmButton:hover {
-  background: #125ba8;
-  transform: translateY(-1px);
-}
-
-.confirmButton:active {
-  transform: translateY(0);
-}
-
-.confirmButton:disabled {
-  background: #a9bfd6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-
-/* =========================================================
-   GENERAL ERROR
-   ========================================================= */
-
-.errorMessage {
-  margin-bottom: 20px;
-  padding: 12px 15px;
-  border: 1px solid #f2baba;
-  border-radius: 9px;
-  background: #fff0f0;
-  color: #c62828;
-  font-size: 14px;
-}
-
-
-/* =========================================================
-   SUCCESS MESSAGE
-   ========================================================= */
-
-.successMessage {
-  margin-bottom: 20px;
-  padding: 12px 15px;
-  border: 1px solid #b8dfc4;
-  border-radius: 9px;
-  background: #edf9f0;
-  color: #23743d;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-
-/* =========================================================
-   LOADING
-   ========================================================= */
-
-.loadingText {
-  padding: 20px;
-  text-align: center;
-  color: #64788f;
-  font-size: 14px;
-}
-
-
-/* =========================================================
-   NO TESTS
-   ========================================================= */
-
-.noTestsMessage {
-  padding: 18px;
-  border: 1px dashed #cbd8e6;
-  border-radius: 10px;
-  background: #f8fafc;
-  color: #718298;
-  text-align: center;
-  font-size: 14px;
-}
-
-
-/* =========================================================
-   RESPONSIVE — TABLET
-   ========================================================= */
-
-@media (max-width: 768px) {
-
-  .bookTestPage {
-    padding: 95px 15px 35px;
-  }
-
-  .bookTestContainer {
-    padding: 28px 22px;
-    border-radius: 17px;
-  }
-
-  .bookTestHeader h1 {
-    font-size: 27px;
-  }
-
-  .testRow {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .appointmentSection {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .appointmentField {
-    justify-content: space-between;
-  }
-
-  .appointmentField input {
-    flex: 1;
-  }
-
-}
-
-
-/* =========================================================
-   RESPONSIVE — MOBILE
-   ========================================================= */
-
-@media (max-width: 500px) {
-
-  .bookTestPage {
-    padding: 85px 10px 25px;
-  }
-
-  .bookTestContainer {
-    padding: 22px 16px;
-    border-radius: 14px;
-  }
-
-  .bookTestHeader {
-    margin-bottom: 25px;
-  }
-
-  .bookTestHeader h1 {
-    font-size: 24px;
-  }
-
-  .bookTestHeader p {
-    font-size: 13px;
-  }
-
-  .formGroup {
-    margin-bottom: 20px;
-  }
-
-  .testRow {
-    display: block;
-  }
-
-  .testRow select,
-  .testRow input {
-    margin-bottom: 10px;
-  }
-
-  .appointmentField {
-    display: block;
-  }
-
-  .appointmentField label {
-    display: block;
-    margin-bottom: 8px;
-  }
-
-  .appointmentField input {
-    width: 100%;
-  }
-
-  .couponContainer {
-    flex-direction: column;
-  }
-
-  .couponContainer button {
-    width: 100%;
-  }
-
-  .totalSection {
-    padding: 18px;
-  }
-
-  .totalRow {
     font-size: 14px;
-  }
+    color: #6b7280;
+}
 
-  .finalRow {
+.account-type strong {
+    color: #1f2937;
+}
+
+/* =========================================================
+   COUPON GRID
+========================================================= */
+
+.coupon-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        250px;
+
+    gap: 18px;
+
+    align-items: end;
+}
+
+.coupon-details {
+    min-height: 48px;
+
+    padding: 10px 14px;
+
+    box-sizing: border-box;
+
+    border-radius: 9px;
+
+    background: #f4f8ff;
+    border: 1px solid #dceaff;
+
+    display: grid;
+
+    grid-template-columns:
+        auto 1fr;
+
+    column-gap: 10px;
+    row-gap: 4px;
+
+    align-content: center;
+
+    font-size: 13px;
+}
+
+.coupon-details strong {
+    color: #4b5563;
+}
+
+.coupon-details span {
+    color: #1565c0;
+    font-weight: 700;
+}
+
+/* =========================================================
+   SPECIAL ID
+========================================================= */
+
+.special-id-box {
+    margin-top: 18px;
+}
+
+.special-id-box small {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+/* =========================================================
+   NO ID MESSAGE
+========================================================= */
+
+.no-id-message {
+    margin-top: 15px;
+
+    padding: 12px 14px;
+
+    border-radius: 8px;
+
+    background: #fff8e8;
+    border: 1px solid #ffe4a8;
+
+    color: #8a5a00;
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   APPLY COUPON
+========================================================= */
+
+.apply-coupon-btn {
+    margin-top: 18px;
+
+    min-height: 44px;
+
+    padding: 0 22px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #1976d2;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.apply-coupon-btn:hover:not(:disabled) {
+    background: #1565c0;
+    transform: translateY(-1px);
+}
+
+.apply-coupon-btn:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   COUPON SUCCESS / ERROR
+========================================================= */
+
+.coupon-success,
+.coupon-error {
+    margin-top: 14px;
+
+    padding: 12px 14px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+}
+
+.coupon-success {
+    background: #e9f8ef;
+    border: 1px solid #b9e7c9;
+    color: #187a3d;
+}
+
+.coupon-error {
+    background: #fff1f1;
+    border: 1px solid #ffcaca;
+    color: #c62828;
+}
+
+/* =========================================================
+   TOTAL SECTION
+========================================================= */
+
+.total-section {
+    margin-top: 8px;
+    margin-bottom: 25px;
+
+    padding: 22px 24px;
+
+    background: #f5f8fd;
+
+    border: 1px solid #e1e9f4;
+    border-radius: 13px;
+}
+
+.summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 7px 0;
+
+    color: #4b5563;
+
+    font-size: 15px;
+}
+
+.summary-row strong {
+    color: #1f2937;
+}
+
+.final-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 10px;
+    padding-top: 15px;
+
+    border-top: 1px solid #dce4ef;
+
+    color: #111827;
+
     font-size: 20px;
-  }
+    font-weight: 700;
+}
 
-  .confirmButton {
-    height: 50px;
-  }
+.final-row strong {
+    color: #1565c0;
+}
+
+/* =========================================================
+   CONFIRM BUTTON
+========================================================= */
+
+.confirm-btn {
+    width: 100%;
+
+    min-height: 52px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #1976d2;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.confirm-btn:hover:not(:disabled) {
+    background: #1565c0;
+    transform: translateY(-1px);
+}
+
+.confirm-btn:disabled {
+    background: #94b8df;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .booking-page {
+        padding: 25px 16px 45px;
+    }
+
+    .booking-container {
+        width: 100%;
+        padding: 30px 25px;
+    }
+
+    .coupon-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .coupon-details {
+        width: 100%;
+    }
 
 }
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .booking-page {
+        padding: 15px 10px 35px;
+    }
+
+    .booking-container {
+        padding: 24px 18px;
+        border-radius: 15px;
+    }
+
+    .booking-header {
+        align-items: flex-start;
+    }
+
+    .booking-header h1 {
+        font-size: 24px;
+    }
+
+    .patient-info {
+        grid-template-columns: 1fr;
+    }
+
+    .selected-lab {
+        grid-template-columns: 1fr;
+    }
+
+    .test-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .remove-test-btn {
+        width: 100%;
+    }
+
+    .schedule-section {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .coupon-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .final-row {
+        font-size: 18px;
+    }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .booking-container {
+        padding: 20px 14px;
+    }
+
+    .booking-header h1 {
+        font-size: 21px;
+    }
+
+    .section-title {
+        font-size: 16px;
+    }
+
+    input,
+    select {
+        min-height: 45px;
+        font-size: 13px;
+    }
+}
+
