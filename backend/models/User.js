@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
     {
-        // =====================================================
-        // BASIC USER INFORMATION
-        // =====================================================
+        // ======================================================
+        // BASIC INFORMATION
+        // ======================================================
 
         name: {
             type: String,
@@ -16,8 +16,8 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
-            lowercase: true,
-            trim: true
+            trim: true,
+            lowercase: true
         },
 
         password: {
@@ -27,8 +27,7 @@ const userSchema = new mongoose.Schema(
 
         phone: {
             type: String,
-            default: "",
-            trim: true
+            default: ""
         },
 
         age: {
@@ -41,10 +40,9 @@ const userSchema = new mongoose.Schema(
             default: ""
         },
 
-
-        // =====================================================
-        // HEALTH INFORMATION
-        // =====================================================
+        // ======================================================
+        // MEDICAL INFORMATION
+        // ======================================================
 
         bloodGroup: {
             type: String,
@@ -81,11 +79,6 @@ const userSchema = new mongoose.Schema(
             default: ""
         },
 
-
-        // =====================================================
-        // ADDRESS INFORMATION
-        // =====================================================
-
         address: {
             type: String,
             default: ""
@@ -96,43 +89,41 @@ const userSchema = new mongoose.Schema(
             default: ""
         },
 
+        // ======================================================
+        // SPECIAL ROLE ID
+        // ======================================================
+        //
+        // Examples:
+        //
+        // Volunteer      → VOL123
+        // Employee       → EMP123
+        // Social Worker  → SW123
+        // Intern         → INT123
+        // Health Worker  → HW123
+        //
+        // Client normally does not need a roleId.
+        //
+        // ======================================================
 
-        // =====================================================
-        // ACCOUNT STATUS
-        // =====================================================
+        roleId: {
+            type: String,
+            default: "",
+            trim: true,
+            uppercase: true
+        },
+
+        // ======================================================
+        // STATUS
+        // ======================================================
 
         status: {
             type: String,
-            enum: [
-                "Active",
-                "Inactive",
-                "Blocked"
-            ],
             default: "Active"
         },
 
-
-        // =====================================================
-        // USER ROLE / ACCOUNT TYPE
-        // =====================================================
-        //
-        // These roles must match the roles used by your
-        // registration/login system and coupon collection.
-        //
-        // Supported account types:
-        //
-        // client
-        // health_worker
-        // intern
-        // volunteer
-        // social_worker
-        // employee
-        // sahash_employee
-        // doctor
-        // lab
-        // admin
-        //
-        // =====================================================
+        // ======================================================
+        // USER ROLE
+        // ======================================================
 
         role: {
             type: String,
@@ -142,14 +133,12 @@ const userSchema = new mongoose.Schema(
                 "admin",
                 "doctor",
                 "lab",
-
                 "health_worker",
                 "intern",
                 "volunteer",
-
-                "social_worker",
+                "sahash_employee",
                 "employee",
-                "sahash_employee"
+                "social_worker"
             ],
 
             default: "client"
@@ -161,13 +150,7 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-
-// =====================================================
-// EXPORT MODEL
-// =====================================================
-
 module.exports = mongoose.model(
     "User",
     userSchema
 );
-

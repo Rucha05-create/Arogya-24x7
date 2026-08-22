@@ -83,6 +83,18 @@ function BookTest() {
             return "employee";
         }
 
+        if (value === "admin") {
+            return "admin";
+        }
+
+        if (value === "doctor") {
+            return "doctor";
+        }
+
+        if (value === "lab") {
+            return "lab";
+        }
+
         return value;
     };
 
@@ -191,6 +203,13 @@ function BookTest() {
         useState("");
 
     // ======================================================
+    // COUPON VALIDATION LOADING
+    // ======================================================
+
+    const [isApplyingCoupon, setIsApplyingCoupon] =
+        useState(false);
+
+    // ======================================================
     // BOOKING LOADING
     // ======================================================
 
@@ -210,11 +229,42 @@ function BookTest() {
     // ======================================================
 
     const normalizeCouponRole = (role) => {
-        return String(role || "")
+        const value = String(role || "")
             .toLowerCase()
             .trim()
             .replace(/-/g, "_")
             .replace(/\s+/g, "_");
+
+        if (
+            value === "healthworker" ||
+            value === "health_worker"
+        ) {
+            return "health_worker";
+        }
+
+        if (
+            value === "sahashemployee" ||
+            value === "sahash_employee"
+        ) {
+            return "sahash_employee";
+        }
+
+        if (
+            value === "socialworker" ||
+            value === "social_worker"
+        ) {
+            return "social_worker";
+        }
+
+        if (
+            value === "client" ||
+            value === "user" ||
+            value === "patient"
+        ) {
+            return "client";
+        }
+
+        return value;
     };
 
     // ======================================================
@@ -367,6 +417,24 @@ function BookTest() {
     // ======================================================
     // LOAD COUPONS
     // ======================================================
+    //
+    // IMPORTANT:
+    //
+    // Your verified endpoint is:
+    //
+    // GET /api/coupons
+    //
+    // Therefore we fetch ALL coupons from this endpoint.
+    //
+    // Then we filter:
+    //
+    // 1. isActive === true
+    // 2. expiryDate is null OR expiryDate >= today
+    //
+    // This avoids problems if /api/coupons/active is not
+    // returning the data correctly.
+    //
+    // ======================================================
 
     useEffect(() => {
         const fetchCoupons = async () => {
@@ -388,15 +456,81 @@ function BookTest() {
                     await response.json();
 
                 console.log(
-                    "Coupons received:",
+                    "All coupons received:",
                     data
                 );
 
-                setCoupons(
+                const couponList =
                     Array.isArray(data)
                         ? data
-                        : []
+                        : Array.isArray(data?.coupons)
+                            ? data.coupons
+                            : [];
+
+                // ==================================================
+                // FILTER ACTIVE + NON-EXPIRED COUPONS
+                // ==================================================
+
+                const now = new Date();
+
+                const activeCoupons =
+                    couponList.filter(
+                        (item) => {
+
+                            // ------------------------------
+                            // ACTIVE CHECK
+                            // ------------------------------
+
+                            if (
+                                item.isActive === false
+                            ) {
+                                return false;
+                            }
+
+                            // ------------------------------
+                            // EXPIRY CHECK
+                            // ------------------------------
+
+                            if (
+                                item.expiryDate
+                            ) {
+
+                                const expiry =
+                                    new Date(
+                                        item.expiryDate
+                                    );
+
+                                if (
+                                    !Number.isNaN(
+                                        expiry.getTime()
+                                    ) &&
+                                    expiry < now
+                                ) {
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        }
+                    );
+
+                console.log(
+                    "Active coupons available:",
+                    activeCoupons
                 );
+
+                setCoupons(
+                    activeCoupons
+                );
+
+                if (
+                    activeCoupons.length === 0
+                ) {
+                    setCouponError(
+                        "No active coupons are currently available."
+                    );
+                }
+
             } catch (error) {
                 console.error(
                     "Fetch coupons error:",
@@ -406,8 +540,10 @@ function BookTest() {
                 setCoupons([]);
 
                 setCouponError(
+                    error.message ||
                     "Unable to load discount coupons."
                 );
+
             } finally {
                 setLoadingCoupons(false);
             }
@@ -420,15 +556,17 @@ function BookTest() {
     // AVAILABLE COUPONS
     // ======================================================
     //
-    // IMPORTANT:
-    // Show ALL coupons in the dropdown.
+    // Show ALL active coupons.
     //
-    // The user's role is checked later inside
-    // applyCoupon().
+    // Role validation is performed when the user
+    // clicks Apply Coupon.
     //
-    // This means a Client can SEE all available
-    // coupon types, but cannot APPLY a Volunteer,
-    // Intern, Employee, etc. coupon.
+    // Example for Client:
+    //
+    // CLIENT10 -> can apply
+    // VOL15    -> visible but cannot apply
+    // EMP20    -> visible but cannot apply
+    //
     // ======================================================
 
     const availableCoupons = coupons;
@@ -614,7 +752,7 @@ function BookTest() {
     // APPLY COUPON
     // ======================================================
 
-    const applyCoupon = () => {
+    const applyCoupon = async () => {
         setCouponMessage("");
         setCouponError("");
         setDiscount(0);
@@ -622,6 +760,14 @@ function BookTest() {
         if (!coupon) {
             setCouponError(
                 "Please select a coupon."
+            );
+
+            return;
+        }
+
+        if (totalAmount <= 0) {
+            setCouponError(
+                "Please select at least one test before applying the coupon."
             );
 
             return;
@@ -644,6 +790,45 @@ function BookTest() {
             );
 
             return;
+        }
+
+        // ==================================================
+        // CHECK ACTIVE STATUS AGAIN
+        // ==================================================
+
+        if (
+            selected.isActive === false
+        ) {
+            setCouponError(
+                "This coupon is currently inactive."
+            );
+
+            return;
+        }
+
+        // ==================================================
+        // CHECK EXPIRY AGAIN
+        // ==================================================
+
+        if (selected.expiryDate) {
+
+            const expiry =
+                new Date(
+                    selected.expiryDate
+                );
+
+            if (
+                !Number.isNaN(
+                    expiry.getTime()
+                ) &&
+                expiry < new Date()
+            ) {
+                setCouponError(
+                    "This coupon has expired."
+                );
+
+                return;
+            }
         }
 
         // ==================================================
@@ -671,7 +856,7 @@ function BookTest() {
         );
 
         // ==================================================
-        // ROLE VALIDATION
+        // FRONTEND ROLE VALIDATION
         // ==================================================
 
         if (
@@ -690,30 +875,22 @@ function BookTest() {
         }
 
         // ==================================================
-        // TEST VALIDATION
-        // ==================================================
-
-        if (totalAmount <= 0) {
-            setCouponError(
-                "Please select at least one test before applying the coupon."
-            );
-
-            return;
-        }
-
-        // ==================================================
         // SPECIAL ID VALIDATION
         // ==================================================
+
+        let enteredId = "";
 
         if (
             couponRequiresId(
                 selected
             )
         ) {
-            if (
-                !specialId ||
-                specialId.trim() === ""
-            ) {
+            enteredId =
+                String(
+                    specialId || ""
+                ).trim();
+
+            if (!enteredId) {
                 setCouponError(
                     `Please enter your ${getIdLabel()}.`
                 );
@@ -722,7 +899,7 @@ function BookTest() {
             }
 
             if (
-                specialId.trim().length < 3
+                enteredId.length < 3
             ) {
                 setCouponError(
                     `Please enter a valid ${getIdLabel()}.`
@@ -733,31 +910,103 @@ function BookTest() {
         }
 
         // ==================================================
-        // APPLY DISCOUNT
+        // BACKEND COUPON VALIDATION
         // ==================================================
 
-        const discountValue =
-            Number(
-                selected.discount || 0
+        try {
+            setIsApplyingCoupon(true);
+
+            const response =
+                await fetch(
+                    "http://localhost:5000/api/coupons/validate",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                code:
+                                    selected.code,
+
+                                role:
+                                    loggedInRole,
+
+                                id:
+                                    enteredId || null,
+
+                                amount:
+                                    totalAmount
+                            })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            console.log(
+                "Coupon validation response:",
+                data
             );
 
-        if (
-            discountValue <= 0
-        ) {
+            if (
+                !response.ok ||
+                !data.valid
+            ) {
+                throw new Error(
+                    data.message ||
+                    "Unable to validate coupon."
+                );
+            }
+
+            // ==================================================
+            // APPLY SERVER-VALIDATED DISCOUNT
+            // ==================================================
+
+            const discountValue =
+                Number(
+                    data.coupon?.discount ??
+                    selected.discount ??
+                    0
+                );
+
+            if (
+                discountValue <= 0
+            ) {
+                setCouponError(
+                    "This coupon does not have a valid discount."
+                );
+
+                return;
+            }
+
+            setDiscount(
+                discountValue
+            );
+
+            setCouponMessage(
+                `${selected.code} applied successfully! You received ${discountValue}% discount.`
+            );
+
+        } catch (error) {
+            console.error(
+                "Apply Coupon Error:",
+                error
+            );
+
+            setDiscount(0);
+
             setCouponError(
-                "This coupon does not have a valid discount."
+                error.message ||
+                "Unable to validate coupon."
             );
 
-            return;
+        } finally {
+            setIsApplyingCoupon(false);
         }
-
-        setDiscount(
-            discountValue
-        );
-
-        setCouponMessage(
-            `${selected.code} applied successfully! You received ${discountValue}% discount.`
-        );
     };
 
     // ======================================================
@@ -850,7 +1099,7 @@ function BookTest() {
         }
 
         // ==================================================
-        // VERIFY COUPON ROLE AGAIN BEFORE BOOKING
+        // VERIFY COUPON BEFORE BOOKING
         // ==================================================
 
         if (selectedCoupon) {
@@ -887,6 +1136,20 @@ function BookTest() {
 
                     return;
                 }
+            }
+
+            // --------------------------------------------------
+            // Coupon must actually be applied.
+            // --------------------------------------------------
+
+            if (
+                Number(discount || 0) <= 0
+            ) {
+                alert(
+                    "Please apply the selected coupon before booking."
+                );
+
+                return;
             }
         }
 
@@ -1095,6 +1358,7 @@ function BookTest() {
                     2
                 )}`
             );
+
         } catch (err) {
             console.error(
                 "Booking Error:",
@@ -1105,6 +1369,7 @@ function BookTest() {
                 err.message ||
                 "Unable to book appointment."
             );
+
         } finally {
             setIsBooking(false);
         }
@@ -1512,7 +1777,8 @@ function BookTest() {
                                         handleCouponChange
                                     }
                                     disabled={
-                                        loadingCoupons
+                                        loadingCoupons ||
+                                        isApplyingCoupon
                                     }
                                 >
 
@@ -1563,7 +1829,7 @@ function BookTest() {
                                                 value=""
                                                 disabled
                                             >
-                                                No coupons available
+                                                No active coupons available
                                             </option>
                                         )
 
@@ -1663,6 +1929,9 @@ function BookTest() {
                                             placeholder={
                                                 getIdPlaceholder()
                                             }
+                                            disabled={
+                                                isApplyingCoupon
+                                            }
                                         />
 
                                         <small>
@@ -1698,10 +1967,13 @@ function BookTest() {
                             }
                             disabled={
                                 !coupon ||
-                                totalAmount <= 0
+                                totalAmount <= 0 ||
+                                isApplyingCoupon
                             }
                         >
-                            Apply Coupon
+                            {isApplyingCoupon
+                                ? "Validating Coupon..."
+                                : "Apply Coupon"}
                         </button>
 
                         {couponMessage && (
@@ -1788,7 +2060,8 @@ function BookTest() {
                         type="submit"
                         className="confirm-btn"
                         disabled={
-                            isBooking
+                            isBooking ||
+                            isApplyingCoupon
                         }
                     >
                         {isBooking
@@ -1805,3 +2078,4 @@ function BookTest() {
 }
 
 export default BookTest;
+

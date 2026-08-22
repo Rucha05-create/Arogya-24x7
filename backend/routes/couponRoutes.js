@@ -3,13 +3,21 @@ const express = require("express");
 const router = express.Router();
 
 const {
+
     getCoupons,
+
     getActiveCoupons,
+
     validateCoupon,
+
     createCoupon,
+
     getCouponById,
+
     updateCoupon,
+
     deleteCoupon
+
 } = require("../controllers/couponController");
 
 

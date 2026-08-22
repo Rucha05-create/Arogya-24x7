@@ -44,6 +44,9 @@ const couponSchema = new mongoose.Schema(
         // WHO CAN USE THIS COUPON
         //
         // client
+        // intern
+        // health_worker
+        // sahash_employee
         // volunteer
         // employee
         // social_worker
@@ -55,6 +58,9 @@ const couponSchema = new mongoose.Schema(
 
             enum: [
                 "client",
+                "intern",
+                "health_worker",
+                "sahash_employee",
                 "volunteer",
                 "employee",
                 "social_worker"
@@ -69,6 +75,15 @@ const couponSchema = new mongoose.Schema(
         // WHETHER ID IS REQUIRED
         //
         // Client:
+        // false
+        //
+        // Intern:
+        // false
+        //
+        // Health Worker:
+        // false
+        //
+        // Sahash Employee:
         // false
         //
         // Volunteer:
@@ -99,7 +114,7 @@ const couponSchema = new mongoose.Schema(
         // social_worker:
         // social_worker_id
         //
-        // client:
+        // Other roles:
         // null
         // ==================================================
 
@@ -201,6 +216,18 @@ const couponSchema = new mongoose.Schema(
 // requiresId = false
 // idType = null
 //
+// Intern:
+// requiresId = false
+// idType = null
+//
+// Health Worker:
+// requiresId = false
+// idType = null
+//
+// Sahash Employee:
+// requiresId = false
+// idType = null
+//
 // Volunteer:
 // requiresId = true
 // idType = volunteer_id
@@ -224,6 +251,57 @@ couponSchema.pre(
 
         if (
             this.allowedRole === "client"
+        ) {
+
+            this.requiresId = false;
+
+            this.idType = null;
+
+            this.eligibleId = "";
+
+        }
+
+
+        // --------------------------------------------------
+        // INTERN
+        // --------------------------------------------------
+
+        else if (
+            this.allowedRole === "intern"
+        ) {
+
+            this.requiresId = false;
+
+            this.idType = null;
+
+            this.eligibleId = "";
+
+        }
+
+
+        // --------------------------------------------------
+        // HEALTH WORKER
+        // --------------------------------------------------
+
+        else if (
+            this.allowedRole === "health_worker"
+        ) {
+
+            this.requiresId = false;
+
+            this.idType = null;
+
+            this.eligibleId = "";
+
+        }
+
+
+        // --------------------------------------------------
+        // SAHASH EMPLOYEE
+        // --------------------------------------------------
+
+        else if (
+            this.allowedRole === "sahash_employee"
         ) {
 
             this.requiresId = false;

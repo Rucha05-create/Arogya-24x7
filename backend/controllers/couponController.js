@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Coupon = require("../models/Coupon");
+const User = require("../models/User");
 
 
 // ======================================================
@@ -30,7 +31,6 @@ const normalizeRole = (role) => {
 
     if (
         value === "sahashemployee" ||
-        value === "sahash_employee" ||
         value === "sahash_employee"
     ) {
         return "sahash_employee";
@@ -123,18 +123,6 @@ const allowedRoles = [
 // ======================================================
 // ROLES THAT REQUIRE SPECIAL ID
 // ======================================================
-//
-// Only these roles must enter an ID to use their coupon.
-//
-// Client      -> No ID
-// Intern      -> No ID
-// Health Worker -> No ID
-// Sahash Employee -> No ID
-//
-// Volunteer   -> ID REQUIRED
-// Employee    -> ID REQUIRED
-// Social Worker -> ID REQUIRED
-//
 
 const rolesRequiringId = [
     "volunteer",
@@ -167,23 +155,150 @@ const getDefaultIdType = (role) => {
 
 
 // ======================================================
-// CREATE COUPON
+// GET USER ID FIELD
 // ======================================================
 //
-// POST /api/coupons
+// This allows the system to work with different field
+// names if you later add dedicated IDs to User.js.
 //
-// Example:
-//
-// {
-//     "code": "VOL15",
-//     "discount": 15,
-//     "allowedRole": "volunteer",
-//     "requiresId": true,
-//     "idType": "volunteer_id",
-//     "eligibleId": "",
-//     "isActive": true
-// }
-//
+// ======================================================
+
+const getUserIdFields = (role) => {
+
+    switch (role) {
+
+        case "volunteer":
+            return [
+                "volunteerId",
+                "volunteerID",
+                "specialId",
+                "employeeId",
+                "_id"
+            ];
+
+        case "employee":
+            return [
+                "employeeId",
+                "employeeID",
+                "specialId",
+                "_id"
+            ];
+
+        case "social_worker":
+            return [
+                "socialWorkerId",
+                "socialWorkerID",
+                "specialId",
+                "_id"
+            ];
+
+        default:
+            return [
+                "_id"
+            ];
+    }
+};
+
+
+// ======================================================
+// CHECK WHETHER ENTERED ID BELONGS TO USER
+// ======================================================
+
+const verifyUserSpecialId = async (
+    enteredId,
+    role,
+    userId
+) => {
+
+    const normalizedEnteredId =
+        normalizeId(enteredId);
+
+    if (!normalizedEnteredId) {
+        return false;
+    }
+
+    if (!userId) {
+        return false;
+    }
+
+    // --------------------------------------------------
+    // FIND LOGGED-IN USER
+    // --------------------------------------------------
+
+    const user =
+        await User.findById(userId).select(
+            "+password"
+        );
+
+    if (!user) {
+        return false;
+    }
+
+    // --------------------------------------------------
+    // VERIFY ROLE
+    // --------------------------------------------------
+
+    const userRole =
+        normalizeRole(user.role);
+
+    if (
+        userRole !==
+        normalizeRole(role)
+    ) {
+        return false;
+    }
+
+    // --------------------------------------------------
+    // CHECK POSSIBLE ID FIELDS
+    // --------------------------------------------------
+
+    const possibleFields =
+        getUserIdFields(role);
+
+    for (
+        const field of possibleFields
+    ) {
+
+        if (
+            user[field] !== undefined &&
+            user[field] !== null
+        ) {
+
+            const value =
+                normalizeId(
+                    user[field]
+                );
+
+            if (
+                value ===
+                normalizedEnteredId
+            ) {
+                return true;
+            }
+        }
+    }
+
+    // --------------------------------------------------
+    // ALSO ALLOW MONGODB USER ID
+    //
+    // This is useful if your current User model does
+    // not yet contain volunteerId / employeeId /
+    // socialWorkerId fields.
+    // --------------------------------------------------
+
+    if (
+        String(user._id) ===
+        normalizedEnteredId
+    ) {
+        return true;
+    }
+
+    return false;
+};
+
+
+// ======================================================
+// CREATE COUPON
 // ======================================================
 
 const createCoupon = async (req, res) => {
@@ -428,10 +543,6 @@ const createCoupon = async (req, res) => {
 // ======================================================
 // GET ALL COUPONS
 // ======================================================
-//
-// GET /api/coupons
-//
-// ======================================================
 
 const getCoupons = async (req, res) => {
 
@@ -474,12 +585,6 @@ const getCoupons = async (req, res) => {
 
 // ======================================================
 // GET ACTIVE COUPONS
-// ======================================================
-//
-// GET /api/coupons/active
-//
-// Used by BookTest.js.
-//
 // ======================================================
 
 const getActiveCoupons = async (req, res) => {
@@ -554,6 +659,7 @@ const getActiveCoupons = async (req, res) => {
 //     "code": "VOL15",
 //     "role": "volunteer",
 //     "id": "VOL123",
+//     "userId": "USER_MONGODB_ID",
 //     "amount": 2500
 // }
 //
@@ -567,7 +673,8 @@ const validateCoupon = async (req, res) => {
             code,
             role,
             id,
-            amount
+            amount,
+            userId
         } = req.body;
 
 
@@ -699,15 +806,20 @@ const validateCoupon = async (req, res) => {
 
         if (coupon.requiresId) {
 
-            const userId =
-                normalizeId(id);
+            const userIdValue =
+                userId ||
+                req.user?.id ||
+                req.user?._id;
 
 
             // ------------------------------------------------
             // ID NOT PROVIDED
             // ------------------------------------------------
 
-            if (!userId) {
+            if (
+                !id ||
+                String(id).trim() === ""
+            ) {
 
                 return res.status(400).json({
 
@@ -742,7 +854,7 @@ const validateCoupon = async (req, res) => {
                 coupon.eligibleId &&
                 normalizeId(
                     coupon.eligibleId
-                ) !== userId
+                ) !== normalizeId(id)
             ) {
 
                 return res.status(403).json({
@@ -753,6 +865,47 @@ const validateCoupon = async (req, res) => {
                         "The entered ID is not eligible for this coupon"
 
                 });
+
+            }
+
+
+            // ------------------------------------------------
+            // VERIFY ID BELONGS TO LOGGED-IN USER
+            // ------------------------------------------------
+
+            if (userIdValue) {
+
+                const isValidUserId =
+                    await verifyUserSpecialId(
+                        id,
+                        userRole,
+                        userIdValue
+                    );
+
+
+                if (!isValidUserId) {
+
+                    return res.status(403).json({
+
+                        valid: false,
+
+                        message:
+                            `The entered ${coupon.idType
+                                ? coupon.idType.replace(
+                                    /_/g,
+                                    " "
+                                )
+                                : "ID"
+                            } does not belong to the logged-in ${String(
+                                userRole
+                            ).replace(
+                                /_/g,
+                                " "
+                            )} account`
+
+                    });
+
+                }
 
             }
 
@@ -881,10 +1034,6 @@ const validateCoupon = async (req, res) => {
 // ======================================================
 // GET COUPON BY ID
 // ======================================================
-//
-// GET /api/coupons/:id
-//
-// ======================================================
 
 const getCouponById = async (req, res) => {
 
@@ -955,10 +1104,6 @@ const getCouponById = async (req, res) => {
 
 // ======================================================
 // UPDATE COUPON
-// ======================================================
-//
-// PUT /api/coupons/:id
-//
 // ======================================================
 
 const updateCoupon = async (req, res) => {
@@ -1193,7 +1338,6 @@ const updateCoupon = async (req, res) => {
             )
         ) {
 
-            // These roles ALWAYS require ID.
             coupon.requiresId = true;
 
         }
@@ -1327,10 +1471,6 @@ const updateCoupon = async (req, res) => {
 // ======================================================
 // DELETE COUPON
 // ======================================================
-//
-// DELETE /api/coupons/:id
-//
-// ======================================================
 
 const deleteCoupon = async (req, res) => {
 
@@ -1435,4 +1575,3 @@ module.exports = {
     deleteCoupon
 
 };
-
